@@ -13,7 +13,7 @@ from revolve2.core.modular_robot import ModularRobot, Body, Brick, ActiveHinge
 from random import Random
 from revolve2.core.modular_robot.brains import CpgRandom
 
-from ...core.database import StaticData
+from revolve2.serialization import StaticData
 from revolve2.core.database.serialization import Serializable, SerializeError
 
 

@@ -4,7 +4,6 @@ import math
 from random import Random
 from typing import List, Optional, Tuple
 
-import multineat
 import revolve2.core.optimization.ea.population_management as population_management
 import revolve2.core.optimization.ea.selection as selection
 from pyrr import Quaternion, Vector3

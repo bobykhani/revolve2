@@ -2,8 +2,8 @@ from typing import Generic, TypeVar
 
 from revolve2.core.modular_robot import ModularRobot
 
-from core.revolve2.core.database import StaticData
-from core.revolve2.core.database.serialization import Serializable
+from revolve2.serialization import StaticData
+from revolve2.serialization import Serializable
 
 
 class BodybrainGenotype(Serializable):

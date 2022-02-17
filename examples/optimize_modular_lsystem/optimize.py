@@ -1,8 +1,6 @@
 import logging
 from random import Random
 
-import multineat
-
 from revolve2.core.database.sqlite import Database as DbSqlite
 
 from genotype import Genotype
