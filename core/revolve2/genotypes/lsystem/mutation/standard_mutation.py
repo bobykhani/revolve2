@@ -79,13 +79,14 @@ def handle_addition(genotype, genotype_conf):
     """
     target_production_rule = random.choice(list(genotype.grammar))
     if target_production_rule == Alphabet.CORE_COMPONENT:
-        addition_index = random.randint(1, len(genotype.grammar[target_production_rule]) - 1)
+        if(len(genotype.grammar[target_production_rule]) > 1):
+            addition_index = random.randint(1, len(genotype.grammar[target_production_rule]) - 1)
+        else:
+            return genotype
     else:
         addition_index = random.randint(0, len(genotype.grammar[target_production_rule]) - 1)
     symbol_to_add = generate_symbol(genotype_conf)
     genotype.grammar[target_production_rule].insert(addition_index, symbol_to_add)
-#    genotype_logger.info(
-#        f'mutation: add {symbol_to_add} in {genotype.id} for {target_production_rule} at {addition_index}.')
     return genotype
 
 
