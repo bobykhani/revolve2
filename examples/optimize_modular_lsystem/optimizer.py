@@ -62,7 +62,7 @@ class Optimizer(EvolutionaryOptimizer[Genotype, float]):
             initial_population,
             initial_fitness,
         )
-        self._runner = LocalRunner(LocalRunner.SimParams(), headless=False)
+        self._runner = LocalRunner(LocalRunner.SimParams(), headless=True)
         self._simulation_time = simulation_time
         self._sampling_frequency = sampling_frequency
         self._control_frequency = control_frequency
@@ -164,15 +164,14 @@ class Optimizer(EvolutionaryOptimizer[Genotype, float]):
     def _save_states(
         self, states: List[Tuple[float, State]], database: Database, db_node: Node
     ) -> None:
-        pass
-        # with database.begin_transaction() as txn:
-        #     db_node.set_object(
-        #         txn,
-        #         [
-        #             {"time": time, "actors": actors.serialize()}
-        #             for (time, actors) in states
-        #         ],
-        #     )
+        with database.begin_transaction() as txn:
+            db_node.set_db_data(
+                txn,
+                [
+                    {"time": time, "actors": actors.serialize()}
+                    for (time, actors) in states
+                ],
+            )
 
     @staticmethod
     def _calculate_fitness(begin_state: ActorState, end_state: ActorState) -> float:

@@ -52,7 +52,7 @@ def generate_symbol(genotype_conf):
 
     :return: symbol
     """
-    symbol_category = random.randint(1, 3)
+    symbol_category = random.randint(1, 2)
     # Modules
     if symbol_category == 1:
         alphabet = random.randint(1, len(Alphabet.modules()) - 1)
@@ -63,7 +63,7 @@ def generate_symbol(genotype_conf):
         symbol = lsystem.build_symbol(Alphabet.morphology_moving_commands()[alphabet], genotype_conf)
     else:
         raise Exception(
-            'random number did not generate a number between 1 and 5. The value was: {}'.format(symbol_category))
+            'random number did not generate a number between 1 and 2. The value was: {}'.format(symbol_category))
 
     return symbol
 

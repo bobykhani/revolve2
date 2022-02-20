@@ -2,6 +2,9 @@
 from abc import ABC
 from enum import Enum
 from typing import cast, List, Tuple
+import pickle
+
+import jsons
 
 import core.revolve2.core.modular_robot
 from ._genotype import BodybrainGenotype as Genotype
@@ -226,11 +229,12 @@ class lsystem(Genotype, Serializable, ABC):
         return symbol
 
     def serialize(self) -> StaticData:
-        pass
+        return pickle.dumps(self)
 
     @classmethod
     def deserialize(cls, data: StaticData) -> Serializable:
-        pass
+        genotype = pickle.loads(data)
+        return genotype
 
 
 from .initialization import random_initialization

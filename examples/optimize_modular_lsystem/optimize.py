@@ -8,8 +8,6 @@ from optimizer import Optimizer
 
 
 async def main():
-    # number of initial mutations for body and brain CPPNWIN networks
-    NUM_INITIAL_MUTATIONS = 10
 
     SIMULATION_TIME = 50
     SAMPLING_FREQUENCY = 5
@@ -17,7 +15,7 @@ async def main():
 
     POPULATION_SIZE = 10
     OFFSPRING_SIZE = 5
-    NUM_GENERATIONS = 5
+    NUM_GENERATIONS = 10
 
     logging.basicConfig(
         level=logging.DEBUG,
