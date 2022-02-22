@@ -25,12 +25,18 @@ def _generate_random_grammar(conf):
             symbol_morph_moving = random.randint(
                 0, len(Alphabet.morphology_moving_commands()) - 1
             )
+            symbol_morph_mounting = random.randint(
+                0, len(Alphabet.morphology_mounting_commands()) - 1
+            )
 
             grammar[symbol[0]].extend(
                 [
                     lsystem.build_symbol(Alphabet.modules()[symbol_module], conf),
                     lsystem.build_symbol(
                         Alphabet.morphology_moving_commands()[symbol_morph_moving], conf
+                    ),
+                    lsystem.build_symbol(
+                        Alphabet.morphology_mounting_commands()[symbol_morph_mounting], conf
                     ),
                 ]
             )

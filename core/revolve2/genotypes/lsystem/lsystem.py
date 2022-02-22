@@ -1,23 +1,18 @@
-# no mother classes have been defined yet! not sure how to separate the the filed in folders...
 from abc import ABC
 from enum import Enum
-from typing import cast, List, Tuple
 import pickle
 
-import jsons
-
-import core.revolve2.core.modular_robot
 from ._genotype import BodybrainGenotype as Genotype
 import random
 import math
 import copy
-import itertools
 from revolve2.core.modular_robot import ModularRobot, Body, Brick, ActiveHinge
 from random import Random
 from revolve2.core.modular_robot.brains import CpgRandom
 
 from revolve2.serialization import StaticData
-from revolve2.core.database.serialization import Serializable, SerializeError
+from revolve2.core.database.serialization import Serializable
+import queue
 
 
 class Alphabet(Enum):
@@ -33,6 +28,12 @@ class Alphabet(Enum):
     MOVE_FRONT = "movef"
     MOVE_LEFT = "movel"
     MOVE_BACK = "moveb"
+
+    # MorphologyMountingCommands
+    ADD_RIGHT = 'addr'
+    ADD_FRONT = 'addf'
+    ADD_LEFT = 'addl'
+    ADD_BACK = 'addb'
 
     @staticmethod
     def modules():
@@ -52,6 +53,13 @@ class Alphabet(Enum):
             [Alphabet.MOVE_BACK, []],
         ]
 
+    @staticmethod
+    def morphology_mounting_commands():
+        return [
+            [Alphabet.ADD_RIGHT, []],
+            [Alphabet.ADD_FRONT, []],
+            [Alphabet.ADD_LEFT, []]
+        ]
 
 class lsystem(Genotype, Serializable, ABC):
     """
@@ -64,6 +72,7 @@ class lsystem(Genotype, Serializable, ABC):
         :param robot_id: unique id of the robot
         :type conf: PlasticodingConfig
         """
+        self.module_queue = []
         self.conf = conf
         self.id = str(robot_id)
         self.grammar = {}
@@ -97,7 +106,7 @@ class lsystem(Genotype, Serializable, ABC):
             line_array = line.split(" ")
             repleceable_symbol = Alphabet(line_array[0])
             self.grammar[repleceable_symbol] = []
-            rule = line_array[1 : len(line_array) - 1]
+            rule = line_array[1: len(line_array) - 1]
             for symbol_array in rule:
                 symbol_array = symbol_array.split("_")
                 symbol = Alphabet(symbol_array[0])
@@ -147,63 +156,76 @@ class lsystem(Genotype, Serializable, ABC):
             if symbol[self.index_symbol] == Alphabet.CORE_COMPONENT:
                 self.phenotype = Body()
                 self.reference = self.phenotype.core
-
-            if symbol[self.index_symbol] == Alphabet.BLOCK:
-                if self.direction is not None:
-                    if type(self.reference) == ActiveHinge:
-                        self.reference.attachment = Brick(0.0)
-                        self.reference = self.reference.attachment
-                    else:
-                        if self.direction == "Front" and self.reference.front is None:
-                            self.reference.front = Brick(0.0)
-                            self.reference = self.reference.front
-                        if self.direction == "Right" and self.reference.right is None:
-                            self.reference.right = Brick(0.0)
-                            self.reference = self.reference.right
-                        if self.direction == "Left" and self.reference.left is None:
-                            self.reference.left = Brick(0.0)
-                            self.reference = self.reference.left
-                        if type(self.reference) != Brick:
-                            if self.direction == "Back" and self.reference.back is None:
-                                self.reference.back = Brick(0.0)
-                                self.reference = self.reference.back
-
-            if symbol[self.index_symbol] == Alphabet.JOINT_HORIZONTAL:
-                if self.direction is not None:
-                    if type(self.reference) == ActiveHinge:
-                        self.reference.attachment = ActiveHinge(math.pi / 2.0)
-                        self.reference = self.reference.attachment
-                    else:
-                        if self.direction == "Front" and self.reference.front is None:
-                            self.reference.front = ActiveHinge(math.pi / 2.0)
-                            self.reference = self.reference.front
-                        if self.direction == "Right" and self.reference.right is None:
-                            self.reference.right = ActiveHinge(math.pi / 2.0)
-                            self.reference = self.reference.right
-                        if self.direction == "Left" and self.reference.left is None:
-                            self.reference.left = ActiveHinge(math.pi / 2.0)
-                            self.reference = self.reference.left
-                        if type(self.reference) != Brick:
-                            if self.direction == "Back" and self.reference.back is None:
-                                self.reference.back = ActiveHinge(math.pi / 2.0)
-                                self.reference = self.reference.back
-
+            if [symbol[self.index_symbol], []] in Alphabet.modules() and symbol[self.index_symbol] is not Alphabet.CORE_COMPONENT:
+                self.module_queue.append(symbol)
             if [symbol[self.index_symbol], []] in Alphabet.morphology_moving_commands():
-                self.move_in_body(symbol)
+                self.move_on_modules(symbol)
+            if [symbol[self.index_symbol], []] in Alphabet.morphology_mounting_commands():
+                self.add_module(symbol)
 
         brain = CpgRandom(rng)
         robot = ModularRobot(self.phenotype, brain)
         return robot
+    def move_on_modules(self, symbol):
+        if(type(self.reference) is not ActiveHinge):
+            if (symbol[self.index_symbol] == Alphabet.MOVE_FRONT and self.reference != None):
+                if (self.reference.front != None):
+                    self.reference = self.reference.front
+            if (type(self.reference) != ActiveHinge):
+                if (symbol[self.index_symbol] == Alphabet.MOVE_RIGHT and self.reference != None):
+                    if (self.reference.front != None):
+                        self.reference = self.reference.right
+                if (symbol[self.index_symbol] == Alphabet.MOVE_LEFT and self.reference != None):
+                    if (self.reference.front != None):
+                        self.reference = self.reference.left
+        else:
+            if (symbol[self.index_symbol] == Alphabet.MOVE_FRONT and self.reference != None):
+                if (self.reference.attachment != None):
+                    self.reference = self.reference.attachment
 
-    def move_in_body(self, symbol):
-        if symbol[0] == Alphabet.MOVE_FRONT:
-            self.direction = "Front"
-        if symbol[0] == Alphabet.MOVE_RIGHT:
+
+    def add_module(self, symbol):
+        if symbol[0] == Alphabet.ADD_RIGHT:
             self.direction = "Right"
-        if symbol[0] == Alphabet.MOVE_LEFT:
+        if symbol[0] == Alphabet.ADD_LEFT:
             self.direction = "Left"
-        if symbol[0] == Alphabet.MOVE_BACK:
+        if symbol[0] == Alphabet.ADD_FRONT:
+            self.direction = "Front"
+        if symbol[0] == Alphabet.ADD_BACK:
             self.direction = "Back"
+
+        if (len(self.module_queue)>0):
+            symbol_module = self.module_queue.pop()
+
+            if symbol_module[self.index_symbol] == Alphabet.BLOCK and self.reference is not None:
+                if self.direction is not None:
+                    if type(self.reference) == ActiveHinge:
+                        self.reference.attachment = Brick(0.0)
+                    else:
+                        if self.direction == "Front" and self.reference.front is None:
+                            self.reference.front = Brick(0.0)
+                        if self.direction == "Right" and self.reference.right is None:
+                            self.reference.right = Brick(0.0)
+                        if self.direction == "Left" and self.reference.left is None:
+                            self.reference.left = Brick(0.0)
+                        if type(self.reference) != Brick:
+                            if self.direction == "Back" and self.reference.back is None:
+                                self.reference.back = Brick(0.0)
+
+            if symbol_module[self.index_symbol] == Alphabet.JOINT_HORIZONTAL and self.reference is not None:
+                if self.direction is not None:
+                    if type(self.reference) == ActiveHinge:
+                        self.reference.attachment = ActiveHinge(math.pi / 2.0)
+                    else:
+                        if self.direction == "Front" and self.reference.front is None:
+                            self.reference.front = ActiveHinge(math.pi / 2.0)
+                        if self.direction == "Right" and self.reference.right is None:
+                            self.reference.right = ActiveHinge(math.pi / 2.0)
+                        if self.direction == "Left" and self.reference.left is None:
+                            self.reference.left = ActiveHinge(math.pi / 2.0)
+                        if type(self.reference) != Brick:
+                            if self.direction == "Back" and self.reference.back is None:
+                                self.reference.back = ActiveHinge(math.pi / 2.0)
 
     @staticmethod
     def build_symbol(symbol, conf):

@@ -62,7 +62,7 @@ class Optimizer(EvolutionaryOptimizer[Genotype, float]):
             initial_population,
             initial_fitness,
         )
-        self._runner = LocalRunner(LocalRunner.SimParams(), headless=True)
+        self._runner = LocalRunner(LocalRunner.SimParams(), headless=False)
         self._simulation_time = simulation_time
         self._sampling_frequency = sampling_frequency
         self._control_frequency = control_frequency

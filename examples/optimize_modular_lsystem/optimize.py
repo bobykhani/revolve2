@@ -14,7 +14,7 @@ async def main():
     CONTROL_FREQUENCY = 5
 
     POPULATION_SIZE = 10
-    OFFSPRING_SIZE = 5
+    OFFSPRING_SIZE = 10
     NUM_GENERATIONS = 10
 
     logging.basicConfig(
