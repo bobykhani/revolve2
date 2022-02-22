@@ -1,7 +1,6 @@
 import random
 
-from .lsystem import Alphabet, lsystem
-
+from .Lsystem_genotype import Alphabet, lsystem
 
 def _generate_random_grammar(conf):
     """
@@ -48,7 +47,7 @@ def random_initialization(conf):
     Initializing a random genotype.
     :type conf: PlasticodingConfig
     :return: a Genome
-    :rtype: Plasticoding
+    :rtype: lsystem
     """
     genotype = lsystem(conf, 0)
     genotype.grammar = _generate_random_grammar(conf)

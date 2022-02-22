@@ -3,24 +3,24 @@ from __future__ import annotations
 import sys
 from random import Random
 
-from revolve2.serialization import StaticData
-from revolve2.core.database.serialization import Serializable, SerializeError
+from revolve2.serialization import StaticData, Serializable, SerializeError
 from revolve2.core.optimization.ea.modular_robot import BodybrainGenotype
 
-from core.revolve2.genotypes.lsystem.lsystem import lsystem,LsystemConfig
-from core.revolve2.genotypes.lsystem.initialization import random_initialization
-from core.revolve2.genotypes.lsystem.mutation.standard_mutation import standard_mutation
-from core.revolve2.genotypes.lsystem.crossover.standard_crossover import standard_crossover
-from core.revolve2.genotypes.lsystem.crossover.crossover import CrossoverConfig
-from core.revolve2.genotypes.lsystem.mutation.mutation import MutationConfig
-from core.revolve2.genotypes.lsystem.crossover import crossover
+from core.revolve2.genotypes.Lsystem.Lsystem_genotype import lsystem,LsystemConfig
+from core.revolve2.genotypes.Lsystem.initialization import random_initialization
+from core.revolve2.genotypes.Lsystem.mutation.standard_mutation import standard_mutation
+from core.revolve2.genotypes.Lsystem.crossover.standard_crossover import standard_crossover
+from core.revolve2.genotypes.Lsystem.crossover.crossover import CrossoverConfig
+from core.revolve2.genotypes.Lsystem.mutation.mutation import MutationConfig
+from core.revolve2.genotypes.Lsystem.crossover import crossover
+
+def main():
+    gen: lsystem = Genotype.random()
+    gen.mutate()
 
 class Genotype(lsystem, Serializable):
-    def _make_lsystem_params(self):
-        pass
-
     @classmethod
-    def random(cls):
+    def random(cls) -> Genotype:
         return random_initialization(LsystemConfig())
 
     @classmethod

@@ -1,6 +1,6 @@
 import random
 
-from ..lsystem import Alphabet, lsystem
+from ..Lsystem_genotype import Alphabet, lsystem
 
 
 def handle_deletion(genotype):

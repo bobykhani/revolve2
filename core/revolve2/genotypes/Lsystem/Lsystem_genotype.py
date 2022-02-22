@@ -1,22 +1,21 @@
+import copy
+import math
+import pickle
+import queue
+import random
 from abc import ABC
 from enum import Enum
-import pickle
+from random import Random
+
+from revolve2.core.database.serialization import Serializable
+from revolve2.core.modular_robot import ActiveHinge, Body, Brick, ModularRobot
+from revolve2.core.modular_robot.brains import CpgRandom
+from revolve2.serialization import StaticData
 
 from ._genotype import BodybrainGenotype as Genotype
-import random
-import math
-import copy
-from revolve2.core.modular_robot import ModularRobot, Body, Brick, ActiveHinge
-from random import Random
-from revolve2.core.modular_robot.brains import CpgRandom
-
-from revolve2.serialization import StaticData
-from revolve2.core.database.serialization import Serializable
-import queue
 
 
 class Alphabet(Enum):
-
     # Modules
     CORE_COMPONENT = "C"
     JOINT_HORIZONTAL = "AJ1"
@@ -61,14 +60,15 @@ class Alphabet(Enum):
             [Alphabet.ADD_LEFT, []]
         ]
 
-class lsystem(Genotype, Serializable, ABC):
+
+class lsystem(Genotype, Serializable):
     """
     L-system genotypic representation, enhanced with epigenetic capabilities for phenotypic plasticity, through Genetic Programming.
     """
 
     def __init__(self, conf, robot_id):
         """
-        :param conf: configurations for lsystem
+        :param conf: configurations for Lsystem
         :param robot_id: unique id of the robot
         :type conf: PlasticodingConfig
         """
@@ -156,33 +156,34 @@ class lsystem(Genotype, Serializable, ABC):
             if symbol[self.index_symbol] == Alphabet.CORE_COMPONENT:
                 self.phenotype = Body()
                 self.reference = self.phenotype.core
-            if [symbol[self.index_symbol], []] in Alphabet.modules() and symbol[self.index_symbol] is not Alphabet.CORE_COMPONENT:
+            if [symbol[self.index_symbol], []] in Alphabet.modules() and symbol[
+                self.index_symbol] is not Alphabet.CORE_COMPONENT:
                 self.module_queue.append(symbol)
             if [symbol[self.index_symbol], []] in Alphabet.morphology_moving_commands():
                 self.move_on_modules(symbol)
             if [symbol[self.index_symbol], []] in Alphabet.morphology_mounting_commands():
                 self.add_module(symbol)
 
-        brain = CpgRandom(rng)
+        brain = CpgRandom(rng) #SingleCpg(params)
         robot = ModularRobot(self.phenotype, brain)
         return robot
+
     def move_on_modules(self, symbol):
-        if(type(self.reference) is not ActiveHinge):
-            if (symbol[self.index_symbol] == Alphabet.MOVE_FRONT and self.reference != None):
-                if (self.reference.front != None):
+        if type(self.reference) is not ActiveHinge:
+            if symbol[self.index_symbol] == Alphabet.MOVE_FRONT and self.reference is not None:
+                if self.reference.front is not None:
                     self.reference = self.reference.front
-            if (type(self.reference) != ActiveHinge):
-                if (symbol[self.index_symbol] == Alphabet.MOVE_RIGHT and self.reference != None):
-                    if (self.reference.front != None):
+            if type(self.reference) != ActiveHinge:
+                if symbol[self.index_symbol] == Alphabet.MOVE_RIGHT and self.reference is not None:
+                    if self.reference.front is not None:
                         self.reference = self.reference.right
-                if (symbol[self.index_symbol] == Alphabet.MOVE_LEFT and self.reference != None):
-                    if (self.reference.front != None):
+                if symbol[self.index_symbol] == Alphabet.MOVE_LEFT and self.reference is not None:
+                    if self.reference.front is not None:
                         self.reference = self.reference.left
         else:
-            if (symbol[self.index_symbol] == Alphabet.MOVE_FRONT and self.reference != None):
-                if (self.reference.attachment != None):
+            if symbol[self.index_symbol] == Alphabet.MOVE_FRONT and self.reference is not None:
+                if self.reference.attachment is not None:
                     self.reference = self.reference.attachment
-
 
     def add_module(self, symbol):
         if symbol[0] == Alphabet.ADD_RIGHT:
@@ -194,7 +195,7 @@ class lsystem(Genotype, Serializable, ABC):
         if symbol[0] == Alphabet.ADD_BACK:
             self.direction = "Back"
 
-        if (len(self.module_queue)>0):
+        if len(self.module_queue) > 0:
             symbol_module = self.module_queue.pop()
 
             if symbol_module[self.index_symbol] == Alphabet.BLOCK and self.reference is not None:
@@ -212,7 +213,7 @@ class lsystem(Genotype, Serializable, ABC):
                             if self.direction == "Back" and self.reference.back is None:
                                 self.reference.back = Brick(0.0)
 
-            if symbol_module[self.index_symbol] == Alphabet.JOINT_HORIZONTAL and self.reference is not None:
+            if (symbol_module[self.index_symbol] == Alphabet.JOINT_HORIZONTAL or symbol_module[self.index_symbol] == Alphabet.JOINT_VERTICAL) and self.reference is not None:
                 if self.direction is not None:
                     if type(self.reference) == ActiveHinge:
                         self.reference.attachment = ActiveHinge(math.pi / 2.0)
@@ -237,10 +238,10 @@ class lsystem(Genotype, Serializable, ABC):
         index_params = 1
 
         if (
-            symbol[index_symbol] is Alphabet.JOINT_HORIZONTAL
-            or symbol[index_symbol] is Alphabet.JOINT_VERTICAL
+                symbol[index_symbol] is Alphabet.JOINT_HORIZONTAL
+                or symbol[index_symbol] is Alphabet.JOINT_VERTICAL
         ):
-
+            # we still dont use these values because we use cppn cpg network brain
             symbol[index_params] = [
                 random.uniform(conf.weight_min, conf.weight_max),
                 random.uniform(conf.oscillator_param_min, conf.oscillator_param_max),
@@ -259,25 +260,26 @@ class lsystem(Genotype, Serializable, ABC):
         return genotype
 
 
+#
+#
 from .initialization import random_initialization
 
-#
-#
+
 class LsystemConfig:
     def __init__(
-        self,
-        initialization_genome=random_initialization,
-        e_max_groups=3,
-        oscillator_param_min=1,
-        oscillator_param_max=10,
-        weight_param_min=-1,
-        weight_param_max=1,
-        weight_min=-1,
-        weight_max=1,
-        axiom_w=Alphabet.CORE_COMPONENT,
-        i_iterations=3,
-        max_structural_modules=15,
-        robot_id=0,
+            self,
+            initialization_genome=random_initialization,
+            e_max_groups=3,
+            oscillator_param_min=1,
+            oscillator_param_max=10,
+            weight_param_min=-1,
+            weight_param_max=1,
+            weight_min=-1,
+            weight_max=1,
+            axiom_w=Alphabet.CORE_COMPONENT,
+            i_iterations=3,
+            max_structural_modules=15,
+            robot_id=0,
     ):
         self.initialization_genome = initialization_genome
         self.e_max_groups = e_max_groups

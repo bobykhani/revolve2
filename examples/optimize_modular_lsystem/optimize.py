@@ -9,7 +9,7 @@ from optimizer import Optimizer
 
 async def main():
 
-    SIMULATION_TIME = 50
+    SIMULATION_TIME = 5
     SAMPLING_FREQUENCY = 5
     CONTROL_FREQUENCY = 5
 
@@ -26,7 +26,7 @@ async def main():
 
     # random number generator
     rng = Random()
-    rng.seed(5)
+    rng.seed(10)
 
     # database
     database = await DbSqlite.create(f"database")

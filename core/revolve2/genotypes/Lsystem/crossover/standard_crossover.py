@@ -1,6 +1,6 @@
 import random
 
-from ..lsystem import Alphabet, LsystemConfig, lsystem
+from ..Lsystem_genotype import Alphabet, LsystemConfig, lsystem
 
 
 def generate_child_genotype(parent_genotypes, genotype_conf, crossover_conf):
