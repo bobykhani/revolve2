@@ -1,5 +1,4 @@
-from sIOKKUDUHIAOUSHDIUASHDIUHAISUHD")
-print(find_namespace_packageetuptools import find_namespace_packages, setup
+from setuptools import find_namespace_packages, setup
 import pathlib
 import os.path
 
