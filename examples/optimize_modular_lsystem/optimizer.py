@@ -4,14 +4,13 @@ import math
 from random import Random
 from typing import List, Optional, Tuple
 
-import multineat
 import revolve2.core.optimization.ea.population_management as population_management
 import revolve2.core.optimization.ea.selection as selection
 from pyrr import Quaternion, Vector3
 from revolve2.core.database import Database, Node
 from revolve2.core.optimization.ea import EvolutionaryOptimizer, Individual
-from revolve2.actor_controller import ActorController
-from revolve2.core.physics.running import (
+from revolve2.core.physics.control import ActorController
+from revolve2.core.physics.env import (
     ActorControl,
     ActorState,
     Batch,
@@ -20,7 +19,7 @@ from revolve2.core.physics.running import (
     Runner,
     State,
 )
-from revolve2.runners.isaacgym import LocalRunner
+from revolve2.envs.isaacgym import LocalRunner
 
 from genotype import Genotype
 
@@ -30,8 +29,6 @@ class Optimizer(EvolutionaryOptimizer[Genotype, float]):
 
     _controllers: List[ActorController]
 
-    _innov_db_body: multineat.InnovationDatabase
-    _innov_db_brain: multineat.InnovationDatabase
 
     _simulation_time: int
     _sampling_frequency: float
@@ -47,8 +44,6 @@ class Optimizer(EvolutionaryOptimizer[Genotype, float]):
         initial_population: List[Genotype],
         initial_fitness: Optional[List[float]],
         rng: Random,
-        innov_db_body: multineat.InnovationDatabase,
-        innov_db_brain: multineat.InnovationDatabase,
         simulation_time: int,
         sampling_frequency: float,
         control_frequency: float,
@@ -67,9 +62,7 @@ class Optimizer(EvolutionaryOptimizer[Genotype, float]):
             initial_population,
             initial_fitness,
         )
-        self._runner = LocalRunner(LocalRunner.SimParams(), headless=False)
-        self._innov_db_body = innov_db_body
-        self._innov_db_brain = innov_db_brain
+        self._runner = LocalRunner(LocalRunner.SimParams(), headless=True)
         self._simulation_time = simulation_time
         self._sampling_frequency = sampling_frequency
         self._control_frequency = control_frequency
@@ -115,11 +108,10 @@ class Optimizer(EvolutionaryOptimizer[Genotype, float]):
         return self.generation_index != self._num_generations
 
     def _crossover(self, parents: List[Genotype]) -> Genotype:
-        assert len(parents) == 2
-        return Genotype.crossover(parents[0], parents[1], self._rng)
+        return Genotype.crossover(parents)
 
     def _mutate(self, individual: Genotype) -> Genotype:
-        return individual.mutate(self._innov_db_body, self._innov_db_brain, self._rng)
+        return Genotype.mutate(individual)
 
     async def _evaluate_generation(
         self, individuals: List[Genotype], database: Database, dbview: Node
