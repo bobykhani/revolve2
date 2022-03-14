@@ -28,6 +28,7 @@ class LocalRunner(Runner):
                 int
             ]  # actor handles, in same order as provided by environment description
 
+        _xyz: list
         _gym: gymapi.Gym
         _batch: Batch
 
@@ -42,12 +43,14 @@ class LocalRunner(Runner):
             self,
             batch: Batch,
             sim_params: gymapi.SimParams,
+            xyz: list,
             headless: bool,
         ):
             self._gym = gymapi.acquire_gym()
             self._batch = batch
 
             self._sim = self._create_sim(sim_params)
+            self._xyz = xyz
             self._gymenvs = self._create_envs()
 
             if headless:
@@ -71,8 +74,12 @@ class LocalRunner(Runner):
             # TODO this is only temporary. When we switch to the new isaac sim it should be easily possible to
             # let the user create static object, rendering the group plane redundant.
             # But for now we keep it because it's easy for our first test release.
+            x = self._xyz[0] #0
+            y = self._xyz[1] #0.005
+            z = self._xyz[2] #0.1
+            len = math.sqrt(x**2 + y**2 + z**2)
             plane_params = gymapi.PlaneParams()
-            plane_params.normal = gymapi.Vec3(0, 0, 1)
+            plane_params.normal = gymapi.Vec3(x/len, y/len, z/len)
             plane_params.distance = 0
             plane_params.static_friction = 0.8
             plane_params.dynamic_friction = 0.5
@@ -153,6 +160,7 @@ class LocalRunner(Runner):
                     gymenv.actors.append(actor_handle)
 
                 gymenvs.append(gymenv)
+
 
             return gymenvs
 
@@ -254,9 +262,10 @@ class LocalRunner(Runner):
     _sim_params: gymapi.SimParams
     _headless: bool
 
-    def __init__(self, sim_params: gymapi.SimParams, headless: bool = False):
+    def __init__(self, sim_params: gymapi.SimParams, xyz, headless: bool = False):
         self._sim_params = sim_params
         self._headless = headless
+        self._xyz = xyz
 
     @staticmethod
     def SimParams() -> gymapi.SimParams:
@@ -265,7 +274,6 @@ class LocalRunner(Runner):
         sim_params.substeps = 2
         sim_params.up_axis = gymapi.UP_AXIS_Z
         sim_params.gravity = gymapi.Vec3(0.0, 0.0, -9.81)
-
         sim_params.physx.solver_type = 1
         sim_params.physx.num_position_iterations = 4
         sim_params.physx.num_velocity_iterations = 1
@@ -279,7 +287,7 @@ class LocalRunner(Runner):
         result_queue: mp.Queue = mp.Queue()  # type: ignore # TODO
         process = mp.Process(
             target=self._run_batch_impl,
-            args=(result_queue, batch, self._sim_params, self._headless),
+            args=(result_queue, batch, self._sim_params, self._xyz, self._headless),
         )
         process.start()
         states = []
@@ -299,9 +307,10 @@ class LocalRunner(Runner):
         result_queue: mp.Queue,  # type: ignore # TODO
         batch: Batch,
         sim_params: gymapi.SimParams,
+        xyz: [],
         headless: bool,
     ) -> None:
-        _Simulator = cls._Simulator(batch, sim_params, headless)
+        _Simulator = cls._Simulator(batch, sim_params, xyz, headless)
         states = _Simulator.run()
         _Simulator.cleanup()
         for state in states:

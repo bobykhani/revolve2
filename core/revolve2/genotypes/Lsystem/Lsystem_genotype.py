@@ -7,11 +7,9 @@ from abc import ABC
 from enum import Enum
 from random import Random
 
-from revolve2.core.database.serialization import Serializable
+from revolve2.serialization import Serializable, SerializeError, StaticData
 from revolve2.core.modular_robot import ActiveHinge, Body, Brick, ModularRobot
 from revolve2.core.modular_robot.brains import CpgRandom
-from revolve2.serialization import StaticData
-
 from ._genotype import BodybrainGenotype as Genotype
 
 
@@ -216,17 +214,17 @@ class lsystem(Genotype, Serializable):
             if (symbol_module[self.index_symbol] == Alphabet.JOINT_HORIZONTAL or symbol_module[self.index_symbol] == Alphabet.JOINT_VERTICAL) and self.reference is not None:
                 if self.direction is not None:
                     if type(self.reference) == ActiveHinge:
-                        self.reference.attachment = ActiveHinge(math.pi / 2.0)
+                        self.reference.attachment = ActiveHinge(0)
                     else:
                         if self.direction == "Front" and self.reference.front is None:
-                            self.reference.front = ActiveHinge(math.pi / 2.0)
+                            self.reference.front = ActiveHinge(0)
                         if self.direction == "Right" and self.reference.right is None:
-                            self.reference.right = ActiveHinge(math.pi / 2.0)
+                            self.reference.right = ActiveHinge(0)
                         if self.direction == "Left" and self.reference.left is None:
-                            self.reference.left = ActiveHinge(math.pi / 2.0)
+                            self.reference.left = ActiveHinge(0)
                         if type(self.reference) != Brick:
                             if self.direction == "Back" and self.reference.back is None:
-                                self.reference.back = ActiveHinge(math.pi / 2.0)
+                                self.reference.back = ActiveHinge(0)
 
     @staticmethod
     def build_symbol(symbol, conf):
@@ -251,7 +249,7 @@ class lsystem(Genotype, Serializable):
 
         return symbol
 
-    def serialize(self) -> StaticData:
+    def serialize(self) -> bytes:
         return pickle.dumps(self)
 
     @classmethod

@@ -44,8 +44,6 @@ class Genotype(lsystem, Serializable):
 
     @classmethod
     def deserialize(cls, data: StaticData) -> Genotype:
-        if type(data) != dict:
-            raise SerializeError()
-        return cls(
-            #Plasticoding.deserialize(data["body"])
-        )
+        #if type(data) != dict:
+        #    raise SerializeError()
+        return lsystem.deserialize(data)
