@@ -13,15 +13,15 @@ from revolve2.core.optimization import DbId
 async def main() -> None:
     """Run the optimization process."""
     # number of initial mutations for body and brain CPPNWIN networks
-    NUM_INITIAL_MUTATIONS = 10
+    NUM_INITIAL_MUTATIONS = 20
 
     SIMULATION_TIME = 10
-    SAMPLING_FREQUENCY = 5
+    SAMPLING_FREQUENCY = 10
     CONTROL_FREQUENCY = 60
 
-    POPULATION_SIZE = 10
-    OFFSPRING_SIZE = 10
-    NUM_GENERATIONS = 3
+    POPULATION_SIZE = 100
+    OFFSPRING_SIZE = 50
+    NUM_GENERATIONS = 100
 
     logging.basicConfig(
         level=logging.INFO,
@@ -32,7 +32,7 @@ async def main() -> None:
 
     # random number generator
     rng = Random()
-    rng.seed(6)
+    rng.seed(100)
 
     # database
     database = open_async_database_sqlite("./database", create=True)

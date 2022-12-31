@@ -10,13 +10,14 @@ class Module:
 
     _children: List[Optional[Module]]
     _rotation: float
+    _size: float
 
     # The following members are initialized by the ModularRobot finalize function:
     _id: Optional[int]
     _parent: Optional[Module]
     _parent_child_index: Optional[int]
 
-    def __init__(self, num_children: int, rotation: float):
+    def __init__(self, num_children: int, rotation: float, size=None):
         """
         Initialize this object.
 
@@ -29,7 +30,7 @@ class Module:
         self._id = None
         self._parent = None
         self._parent_child_index = None
-
+        self._size = size
     @property
     def children(self) -> List[Optional[Module]]:
         """

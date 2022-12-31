@@ -6,7 +6,7 @@ from queue import Queue
 from typing import Any, List, Optional, Set, Tuple
 
 import multineat
-from revolve2.core.modular_robot import ActiveHinge, Body, Brick, Core, Module
+from revolve2.core.modular_robot import ActiveHinge, Body, Brick, Core, Module, PassiveBone
 
 from .._genotype import Genotype
 from .._random_v1 import random_v1 as base_random_v1
@@ -35,7 +35,7 @@ def random_v1(
         multineat_params,
         output_activation_func,
         5,  # bias(always 1), pos_x, pos_y, pos_z, chain_length
-        5,  # empty, brick, activehinge, rot0, rot90
+        7,  # empty, brick, activehinge, rot0, rot90, PassiveBone, PBSize
         num_initial_mutations,
     )
 
@@ -91,12 +91,14 @@ def develop_v1(
             children.append((Brick.RIGHT, 3))
         elif isinstance(module.module_reference, ActiveHinge):
             children.append((ActiveHinge.ATTACHMENT, 0))
+        elif isinstance(module.module_reference, PassiveBone):
+            children.append((PassiveBone.ATTACHMENT, 0))
         else:  # Should actually never arrive here but just checking module type to be sure
             raise RuntimeError()
 
         for (index, rotation) in children:
             if part_count < max_parts:
-                child = ___add_child(body_net, module, index, rotation, grid)
+                child = ___add_child(body_net, module, index, rotation, grid, size=0.1)
                 if child is not None:
                     to_explore.put(child)
                     part_count += 1
@@ -125,15 +127,20 @@ def __evaluate_cppn(
     outputs = body_net.Output()
 
     # get module type from output probabilities
-    type_probs = [outputs[0], outputs[1], outputs[2]]
-    types = [None, Brick, ActiveHinge]
+    type_probs = [outputs[0], outputs[1], outputs[2], outputs[5]]
+    types = [None, Brick, ActiveHinge, PassiveBone]
     module_type = types[type_probs.index(min(type_probs))]
 
     # get rotation from output probabilities
     rotation_probs = [outputs[3], outputs[4]]
     rotation = rotation_probs.index(min(rotation_probs))
+    size = 0
+    if outputs[5]>0.5:
+        size = 0.2
+    else:
+        size = 0.1
 
-    return (module_type, rotation)
+    return (module_type, rotation, size)
 
 
 def ___add_child(
@@ -142,6 +149,8 @@ def ___add_child(
     child_index: int,
     rotation: int,
     grid: Set[Tuple[int, int, int]],
+    size: float,
+
 ) -> Optional[__Module]:
     forward = __rotate(module.forward, module.up, rotation)
     position = __add(module.position, forward)
@@ -154,12 +163,18 @@ def ___add_child(
     else:
         grid.add(position)
 
-    child_type, orientation = __evaluate_cppn(body_net, position, chain_length)
+    child_type, orientation, size = __evaluate_cppn(body_net, position, chain_length)
     if child_type is None:
         return None
     up = __rotate(module.up, forward, orientation)
 
-    child = child_type(orientation * (math.pi / 2.0))
+    try:
+        if child_type == PassiveBone:
+            child = child_type(0, size=size)
+        else:
+            child = child_type(orientation * (math.pi / 2.0))
+    except Exception as a:
+        print("in",a)
     module.module_reference.children[child_index] = child
 
     return __Module(

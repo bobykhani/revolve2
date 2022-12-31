@@ -1,6 +1,7 @@
 """Classes and functions to describe and work with modular robots as used in the CI Group at VU Amsterdam."""
 
 from ._active_hinge import ActiveHinge
+from ._passive_bone_hinge import PassiveBone
 from ._body import Body
 from ._brain import Brain
 from ._brick import Brick
@@ -12,6 +13,7 @@ from ._not_finalized_error import NotFinalizedError
 
 __all__ = [
     "ActiveHinge",
+    "PassiveBone",
     "Body",
     "Brain",
     "Brick",

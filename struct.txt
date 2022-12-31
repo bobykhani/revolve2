@@ -1,0 +1,319 @@
+.
+├── actor_controller
+│   ├── mypy.ini
+│   ├── revolve2
+│   │   ├── actor_controller
+│   │   │   ├── _actor_controller.py
+│   │   │   ├── __init__.py
+│   │   │   └── py.typed
+│   │   └── actor_controllers
+│   │       └── cpg
+│   │           ├── _cpg_network_structure.py
+│   │           ├── _cpg.py
+│   │           ├── __init__.py
+│   │           └── py.typed
+│   ├── run_mypy.sh
+│   └── setup.py
+├── codetools
+│   ├── black
+│   │   ├── check.sh
+│   │   ├── fix.sh
+│   │   └── requirements.txt
+│   ├── darglint
+│   │   ├── check.sh
+│   │   └── requirements.txt
+│   ├── fix_all.sh
+│   ├── isort
+│   │   ├── check.sh
+│   │   ├── fix.sh
+│   │   └── requirements.txt
+│   ├── mypy
+│   │   ├── check_all.sh
+│   │   ├── check_opensource.sh
+│   │   └── requirements.txt
+│   ├── pydocstyle
+│   │   ├── check.sh
+│   │   └── requirements.txt
+│   ├── pyflakes
+│   │   ├── check.sh
+│   │   └── requirements.txt
+│   ├── requirements.txt
+│   └── sort_all
+│       ├── fix.sh
+│       └── requirements.txt
+├── contributors.txt
+├── core
+│   ├── mypy.ini
+│   ├── revolve2
+│   │   ├── bin
+│   │   │   └── core
+│   │   │       └── optimization
+│   │   │           └── ea
+│   │   │               └── generic_ea
+│   │   │                   └── plot_ea_fitness_float.py
+│   │   └── core
+│   │       ├── database
+│   │       │   ├── _incompatible_error.py
+│   │       │   ├── __init__.py
+│   │       │   ├── _serializer.py
+│   │       │   ├── serializers
+│   │       │   │   ├── _float_serializer.py
+│   │       │   │   ├── __init__.py
+│   │       │   │   └── _nparray1xn_serializer.py
+│   │       │   └── _sqlite.py
+│   │       ├── __init__.py
+│   │       ├── modular_robot
+│   │       │   ├── _active_hinge.py
+│   │       │   ├── _body.py
+│   │       │   ├── _brain.py
+│   │       │   ├── brains
+│   │       │   │   ├── _brain_cpg_network_neighbour.py
+│   │       │   │   ├── _brain_cpg_network_neighbour_random.py
+│   │       │   │   ├── _brain_cpg_network_static.py
+│   │       │   │   ├── __init__.py
+│   │       │   │   └── _make_cpg_network_structure_neighbour.py
+│   │       │   ├── _brick.py
+│   │       │   ├── _core.py
+│   │       │   ├── __init__.py
+│   │       │   ├── _modular_robot.py
+│   │       │   ├── _module.py
+│   │       │   ├── _morphological_measures.py
+│   │       │   └── _not_finalized_error.py
+│   │       ├── optimization
+│   │       │   ├── _db_id.py
+│   │       │   ├── ea
+│   │       │   │   ├── generic_ea
+│   │       │   │   │   ├── _database.py
+│   │       │   │   │   ├── __init__.py
+│   │       │   │   │   ├── _optimizer.py
+│   │       │   │   │   ├── population_management
+│   │       │   │   │   │   ├── _generational.py
+│   │       │   │   │   │   ├── __init__.py
+│   │       │   │   │   │   └── _steady_state.py
+│   │       │   │   │   └── selection
+│   │       │   │   │       ├── _argsort.py
+│   │       │   │   │       ├── __init__.py
+│   │       │   │   │       ├── _multiple_unique.py
+│   │       │   │   │       ├── _supports_lt.py
+│   │       │   │   │       ├── _topn.py
+│   │       │   │   │       └── _tournament.py
+│   │       │   │   ├── __init__.py
+│   │       │   │   └── openai_es.py
+│   │       │   ├── __init__.py
+│   │       │   └── _process.py
+│   │       ├── physics
+│   │       │   ├── actor
+│   │       │   │   ├── _actor.py
+│   │       │   │   ├── _bounding_box.py
+│   │       │   │   ├── _collision.py
+│   │       │   │   ├── __init__.py
+│   │       │   │   ├── _joint.py
+│   │       │   │   ├── _rigid_body.py
+│   │       │   │   ├── sdf
+│   │       │   │   │   ├── __init__.py
+│   │       │   │   │   └── _to_sdf.py
+│   │       │   │   ├── urdf
+│   │       │   │   │   ├── __init__.py
+│   │       │   │   │   └── _to_urdf.py
+│   │       │   │   └── _visual.py
+│   │       │   ├── environment_actor_controller.py
+│   │       │   ├── __init__.py
+│   │       │   └── running
+│   │       │       ├── _actor_control.py
+│   │       │       ├── _batch.py
+│   │       │       ├── _environment_controller.py
+│   │       │       ├── _environment.py
+│   │       │       ├── __init__.py
+│   │       │       ├── _posed_actor.py
+│   │       │       ├── _record_settings.py
+│   │       │       ├── _results.py
+│   │       │       └── _runner.py
+│   │       ├── py.typed
+│   │       └── rpi_controller_remote
+│   │           ├── __init__.py
+│   │           └── _rpi_controller_remote.py
+│   ├── run_mypy.sh
+│   └── setup.py
+├── dev_requirements.sh
+├── docs
+│   ├── Makefile
+│   ├── requirements.txt
+│   └── source
+│       ├── apidoc_template
+│       │   ├── module.rst_t
+│       │   ├── package.rst_t
+│       │   └── toc.rst_t
+│       ├── api_reference
+│       │   ├── revolve2.actor_controller.rst
+│       │   ├── revolve2.actor_controllers.cpg.rst
+│       │   ├── revolve2.actor_controllers.rst
+│       │   ├── revolve2.bin.core.optimization.ea.generic_ea.rst
+│       │   ├── revolve2.bin.core.optimization.ea.rst
+│       │   ├── revolve2.bin.core.optimization.rst
+│       │   ├── revolve2.bin.core.rst
+│       │   ├── revolve2.bin.rpi_controller.rst
+│       │   ├── revolve2.bin.rst
+│       │   ├── revolve2.core.database.rst
+│       │   ├── revolve2.core.database.serializers.rst
+│       │   ├── revolve2.core.modular_robot.brains.rst
+│       │   ├── revolve2.core.modular_robot.rst
+│       │   ├── revolve2.core.optimization.ea.generic_ea.population_management.rst
+│       │   ├── revolve2.core.optimization.ea.generic_ea.rst
+│       │   ├── revolve2.core.optimization.ea.generic_ea.selection.rst
+│       │   ├── revolve2.core.optimization.ea.rst
+│       │   ├── revolve2.core.optimization.rst
+│       │   ├── revolve2.core.physics.actor.rst
+│       │   ├── revolve2.core.physics.actor.sdf.rst
+│       │   ├── revolve2.core.physics.actor.urdf.rst
+│       │   ├── revolve2.core.physics.rst
+│       │   ├── revolve2.core.physics.running.rst
+│       │   ├── revolve2.core.rpi_controller_remote.rst
+│       │   ├── revolve2.core.rst
+│       │   ├── revolve2.genotypes.cppnwin.modular_robot.rst
+│       │   ├── revolve2.genotypes.cppnwin.rst
+│       │   ├── revolve2.genotypes.rst
+│       │   ├── revolve2.rst
+│       │   ├── revolve2.runners.isaacgym.rst
+│       │   ├── revolve2.runners.rst
+│       │   └── revolve2.serialization.rst
+│       ├── conf.py
+│       ├── development_guide
+│       │   └── index.rst
+│       ├── favicon.png
+│       ├── index.rst
+│       ├── installation
+│       │   ├── genotypes
+│       │   │   └── cppnwin.rst
+│       │   ├── index.rst
+│       │   ├── rpi_controller.rst
+│       │   └── runners
+│       │       ├── isaacgym.rst
+│       │       └── mujoco.rst
+│       ├── logo.png
+│       ├── tutorials
+│       │   ├── index.rst
+│       │   ├── optimize_locomotion_analysis.png
+│       │   ├── optimize_locomotion.rst
+│       │   ├── optimize_locomotion_simulator.gif
+│       │   ├── simple_optimization_fitness_plot.png
+│       │   ├── simple_optimization.rst
+│       │   ├── simulate_robot_isaac_errors.png
+│       │   ├── simulate_robot_isaac_results.gif
+│       │   └── simulate_robot_isaac.rst
+│       └── user_guide
+│           ├── database.rst
+│           ├── index.rst
+│           ├── modular_robots.rst
+│           ├── optimization.rst
+│           ├── physics_runners.rst
+│           └── rpi_controller.rst
+├── examples
+│   ├── mypy.ini
+│   ├── openai_es
+│   │   ├── optimize.py
+│   │   ├── optimizer.py
+│   │   ├── plot_fitness.py
+│   │   └── rerun_best.py
+│   ├── optimize_modular
+│   │   ├── genotype.py
+│   │   ├── optimize.py
+│   │   ├── optimizer.py
+│   │   └── rerun_best.py
+│   ├── rpi_controller
+│   │   └── config.json
+│   ├── rpi_controller_remote
+│   │   └── main.py
+│   ├── run_mypy_opensource.sh
+│   ├── run_mypy.sh
+│   ├── simple_optimization
+│   │   ├── genotype.py
+│   │   ├── item.py
+│   │   ├── optimize.py
+│   │   ├── optimizer.py
+│   │   └── phenotype.py
+│   ├── simulate_isaac
+│   │   └── main.py
+│   └── simulate_mujoco
+│       └── main.py
+├── genotypes
+│   └── cppnwin
+│       ├── mypy.ini
+│       ├── revolve2
+│       │   └── genotypes
+│       │       └── cppnwin
+│       │           ├── _crossover_v1.py
+│       │           ├── _genotype.py
+│       │           ├── genotype_schema.py
+│       │           ├── __init__.py
+│       │           ├── modular_robot
+│       │           │   ├── body_genotype_v1.py
+│       │           │   ├── _brain_cpg_network_neighbour_v1.py
+│       │           │   ├── brain_genotype_cpg_v1.py
+│       │           │   └── __init__.py
+│       │           ├── _mutate_v1.py
+│       │           ├── py.typed
+│       │           └── _random_v1.py
+│       ├── run_mypy.sh
+│       └── setup.py
+├── README.md
+├── rpi_controller
+│   ├── mypy.ini
+│   ├── revolve2
+│   │   └── bin
+│   │       └── rpi_controller
+│   │           └── revolve2_rpi_controller.py
+│   ├── run_mypy.sh
+│   └── setup.py
+├── runners
+│   ├── isaacgym
+│   │   ├── mypy.ini
+│   │   ├── revolve2
+│   │   │   └── runners
+│   │   │       └── isaacgym
+│   │   │           ├── __init__.py
+│   │   │           ├── _local_runner.py
+│   │   │           ├── _modular_robot_rerunner.py
+│   │   │           ├── py.typed
+│   │   │           └── terrains
+│   │   │               ├── _even_waves.py
+│   │   │               ├── _flat.py
+│   │   │               ├── __init__.py
+│   │   │               ├── _pyramid.py
+│   │   │               └── _rugged.py
+│   │   ├── run_mypy.sh
+│   │   └── setup.py
+│   └── mujoco
+│       ├── mypy.ini
+│       ├── revolve2
+│       │   └── runners
+│       │       └── mujoco
+│       │           ├── __init__.py
+│       │           ├── _local_runner.py
+│       │           ├── _modular_robot_rerunner.py
+│       │           └── py.typed
+│       ├── run_mypy.sh
+│       └── setup.py
+├── serialization
+│   ├── mypy.ini
+│   ├── revolve2
+│   │   └── serialization
+│   │       ├── _functions.py
+│   │       ├── __init__.py
+│   │       ├── py.typed
+│   │       ├── _serializable.py
+│   │       ├── _serialize_error.py
+│   │       └── _static_data.py
+│   ├── run_mypy.sh
+│   └── setup.py
+├── standard_resources
+│   ├── mypy.ini
+│   ├── revolve2
+│   │   └── standard_resources
+│   │       ├── __init__.py
+│   │       ├── modular_robots.py
+│   │       └── py.typed
+│   ├── run_mypy.sh
+│   └── setup.py
+└── struct.txt
+
+80 directories, 236 files

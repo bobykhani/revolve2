@@ -3,7 +3,7 @@ from typing import Optional
 from ._module import Module
 
 
-class ActiveHinge(Module):
+class PassiveBone(Module):
     """
     An active hinge module for a modular robot.
 
@@ -14,7 +14,7 @@ class ActiveHinge(Module):
 
     # angle range of servo
     # 60 degrees to each side
-    RANGE = 1.047197551
+    RANGE = 0.0
     # max effort of servo
     # motor specs: 9.4 kgfcm at 4.8V or 11 kgfcm at 6.0V
     # about 9.6667 kgfcm at 5.0V, our operating voltage
@@ -24,15 +24,15 @@ class ActiveHinge(Module):
     # motor specs: 0.17 s/60deg at 4.8V or 0.14 s/60deg at 6.0V
     # about 0.1652 s/60deg at 5.0V, our operating voltage
     # 1 / 0.1652 * 60 / 360 * 2pi
-    VELOCITY = 6.338968228
+    VELOCITY = 0.0
 
-    def __init__(self, rotation: float):
+    def __init__(self, rotation: float, size: float):
         """
         Initialize this object.
 
         :param rotation: Orientation of this model relative to its parent.
         """
-        super().__init__(1, rotation)
+        super().__init__(1, rotation, size)
 
     @property
     def attachment(self) -> Optional[Module]:

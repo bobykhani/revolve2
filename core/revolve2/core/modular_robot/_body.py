@@ -5,7 +5,7 @@ from typing import List, Optional, Tuple
 import numpy as np
 from pyrr import Quaternion, Vector3
 from revolve2.core.physics.actor import Actor, Collision, Joint, RigidBody, Visual
-
+from ._passive_bone_hinge import PassiveBone
 from ._active_hinge import ActiveHinge
 from ._brick import Brick
 from ._core import Core
@@ -18,12 +18,10 @@ class Body:
 
     core: Core
     _is_finalized: bool
-
     def __init__(self) -> None:
         """Initialize this object."""
         self.core = Core(0.0)
         self._is_finalized = False
-
     def finalize(self) -> None:
         """
         Finalize the body by assigning ids to all modules.
@@ -125,6 +123,11 @@ class Body:
                     raise NotImplementedError()
             elif isinstance(parent, ActiveHinge):
                 if child_index == ActiveHinge.ATTACHMENT:
+                    rotation = Quaternion()
+                else:
+                    raise NotImplementedError()
+            elif isinstance(parent, PassiveBone):
+                if child_index == PassiveBone.ATTACHMENT:
                     rotation = Quaternion()
                 else:
                     raise NotImplementedError()
@@ -314,6 +317,7 @@ class _ActorBuilder:
         name_prefix: str,
         attachment_offset: Vector3,
         orientation: Quaternion,
+        size = None,
     ) -> None:
         if isinstance(module, Core):
             self._make_core(
@@ -338,6 +342,15 @@ class _ActorBuilder:
                 name_prefix,
                 attachment_offset,
                 orientation,
+            )
+        elif isinstance(module, PassiveBone):
+            self._make_passive_bone(
+                module,
+                body,
+                name_prefix,
+                attachment_offset,
+                orientation,
+                module._size,
             )
         else:
             raise NotImplementedError("Module type not implemented")
@@ -454,6 +467,64 @@ class _ActorBuilder:
                     rotation,
                 )
 
+    def _make_passive_bone(
+            self,
+            module: PassiveBone,
+            body: RigidBody,
+            name_prefix: str,
+            attachment_point: Vector3,
+            orientation: Quaternion,
+            size = 0.1,
+    ) -> None:
+        BOUNDING_BOX = Vector3([size, 0.01, 0.01])  # meter
+        MASS = 0.030  # kg
+        if size == 0.1:
+            CHILD_OFFSET = 0.1 / 2.0  # meter
+        else:
+            CHILD_OFFSET = 0.2 / 2.0  # meter
+
+        position = attachment_point + orientation * Vector3(
+            [BOUNDING_BOX[0] / 2.0, 0.0, 0.0]
+        )
+
+        body.collisions.append(
+            Collision(
+                f"{name_prefix}_brick_collision",
+                position,
+                orientation,
+                MASS,
+                BOUNDING_BOX,
+            )
+        )
+        body.visuals.append(
+            Visual(
+                f"{name_prefix}_brick_visual",
+                position,
+                orientation,
+                "model://rg_robot/meshes/FixedBrick.dae",
+                (1.0, 0.0, 0.0),
+            )
+        )
+
+        for (name_suffix, child_index, angle) in [
+            ("attachment", PassiveBone.ATTACHMENT, 0.0),
+        ]:
+            child = module.children[child_index]
+            if child is not None:
+                rotation = (
+                        orientation
+                        * Quaternion.from_eulers([0.0, 0.0, angle])
+                        * Quaternion.from_eulers([child.rotation, 0, 0])
+                )
+
+                self._make_module(
+                    child,
+                    body,
+                    f"{name_prefix}_{name_suffix}",
+                    position + rotation * Vector3([CHILD_OFFSET, 0.0, 0.0]),
+                    rotation,
+                    size,
+                )
     def _make_active_hinge(
         self,
         module: ActiveHinge,

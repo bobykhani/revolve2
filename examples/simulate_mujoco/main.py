@@ -5,7 +5,7 @@ from random import Random
 
 from pyrr import Quaternion, Vector3
 from revolve2.actor_controller import ActorController
-from revolve2.core.modular_robot import ActiveHinge, Body, Brick, ModularRobot
+from revolve2.core.modular_robot import ActiveHinge, Body, Brick, ModularRobot, PassiveBone
 from revolve2.core.modular_robot.brains import BrainCpgNetworkNeighbourRandom
 from revolve2.core.physics.running import (
     ActorControl,
@@ -93,12 +93,18 @@ async def main() -> None:
     rng.seed(5)
 
     body = Body()
-    body.core.left = ActiveHinge(math.pi / 2.0)
-    body.core.left.attachment = ActiveHinge(math.pi / 2.0)
-    body.core.left.attachment.attachment = Brick(0.0)
-    body.core.right = ActiveHinge(math.pi / 2.0)
-    body.core.right.attachment = ActiveHinge(math.pi / 2.0)
-    body.core.right.attachment.attachment = Brick(0.0)
+    body.core.left = PassiveBone(0, 0.1)
+    #body.core.right = ActiveHinge(math.pi / 2.0)
+    body.core.left.attachment = Brick(0)
+    body.core.left.attachment.right = ActiveHinge(math.pi / 2.0)
+
+    body.core.left.attachment.right.attachment = PassiveBone(0, 0.2)
+    body.core.left.attachment.right.attachment.attachment = Brick(0)
+    # body.core.left.attachment = ActiveHinge(math.pi / 2.0)
+    # body.core.left.attachment.attachment = Brick(0.0)
+    # body.core.right = ActiveHinge(math.pi / 2.0)
+    # body.core.right.attachment = ActiveHinge(math.pi / 2.0)
+    # body.core.right.attachment.attachment = Brick(0.0)
     body.finalize()
 
     brain = BrainCpgNetworkNeighbourRandom(rng)
