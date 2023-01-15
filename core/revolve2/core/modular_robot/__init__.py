@@ -10,7 +10,8 @@ from ._modular_robot import ModularRobot
 from ._module import Module
 from ._morphological_measures import MorphologicalMeasures
 from ._not_finalized_error import NotFinalizedError
-
+from ._measure import Measure
+from ._measure_relative import MeasureRelative
 __all__ = [
     "ActiveHinge",
     "PassiveBone",
@@ -22,4 +23,6 @@ __all__ = [
     "Module",
     "MorphologicalMeasures",
     "NotFinalizedError",
+    "Measure",
+    "MeasureRelative",
 ]

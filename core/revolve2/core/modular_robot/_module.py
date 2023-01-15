@@ -11,6 +11,7 @@ class Module:
     _children: List[Optional[Module]]
     _rotation: float
     _size: float
+    _absolute_rotation: int
 
     # The following members are initialized by the ModularRobot finalize function:
     _id: Optional[int]
@@ -39,6 +40,21 @@ class Module:
         :returns: The list of children.
         """
         return self._children
+
+    def has_children(self) -> bool:
+        """
+        Check wheter module has children
+        :return: True if module has children
+        """
+        has_children = False
+        if self._children == {1: None}: return False
+
+        for i, child in enumerate(self._children):
+            if child is not None:
+                has_children = True
+
+        return has_children
+
 
     @property
     def rotation(self) -> float:

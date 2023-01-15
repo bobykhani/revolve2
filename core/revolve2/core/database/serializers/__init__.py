@@ -1,6 +1,7 @@
 """Serializers for common types."""
 
 from ._float_serializer import DbFloat, FloatSerializer
+from ._states_serializer import StatesSerializer,DbStates
 from ._nparray1xn_serializer import DbNdarray1xn, DbNdarray1xnItem, Ndarray1xnSerializer
 
 __all__ = [
@@ -9,4 +10,5 @@ __all__ = [
     "DbNdarray1xnItem",
     "FloatSerializer",
     "Ndarray1xnSerializer",
+    "DbStates",
 ]
