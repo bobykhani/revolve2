@@ -193,6 +193,23 @@ class Canvas:
 		self.sign_id(mod_id)
 		Canvas.movement_stack.append([Canvas.x_pos, Canvas.y_pos, Canvas.orientation, Canvas.rotating_orientation])
 
+	def draw_bone(self, mod_id, module_size):
+		"""Draw a hinge (blue) on the previous object"""
+
+		self.context.rectangle(Canvas.x_pos, Canvas.y_pos, 1, 1)
+		if (Canvas.rotating_orientation == 0):
+			self.context.set_source_rgb(0.39, 0.86, 0.86)
+		else:
+			self.context.set_source_rgb(0.39, 0.86, 0.86)
+		self.context.fill_preserve()
+		self.context.set_source_rgb(0, 0, 0)
+		self.context.set_line_width(0.01)
+		self.context.stroke()
+		self.calculate_orientation()
+		self.sign_id(mod_id)
+		self.write_size(round(module_size,2))
+		Canvas.movement_stack.append([Canvas.x_pos, Canvas.y_pos, Canvas.orientation, Canvas.rotating_orientation])
+
 	def draw_module(self, mod_id):
 		"""Draw a module (red) on the previous object"""
 		self.context.rectangle(Canvas.x_pos, Canvas.y_pos, 1, 1)
@@ -299,3 +316,12 @@ class Canvas:
 		Canvas.movement_stack = []
 		Canvas.sensors = []
 		Canvas.rotating_orientation = 0
+
+	def write_size(self, mod_size):
+		"""Sign module with the id on the upper left corner of block"""
+		self.context.set_font_size(0.2)
+		self.context.move_to(Canvas.x_pos+ 0.4, Canvas.y_pos + 0.7)
+		self.context.set_source_rgb(0, 0, 0)
+		self.context.show_text(str(mod_size))
+
+		self.context.stroke()

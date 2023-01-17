@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Generic, List, Optional, Tuple, Type, TypeVar, Dict
@@ -13,7 +14,10 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from revolve2.core.modular_robot import MeasureRelative
+from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v1 import (
+    develop_v1 as body_develop)
 
+from core.revolve2.core.modular_robot.render.render import Render
 from ._database import (
     DbBase,
     DbEAOptimizer,
@@ -558,6 +562,25 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
             #         genotype_measures=self.__latest_measures[i])._return_only_relative())
 
             # save generation and possibly measures of initial population            # and let user save their state
+            bodies = [body_develop(ind.genotype.body) for ind in new_individuals]
+
+            img_directory = f'database/body_images/generation_{self.generation_index}/'
+            # Check whether the specified path exists or not
+            isExist = os.path.exists(img_directory)
+            if not isExist:
+                # Create a new directory because it does not exist
+                os.makedirs(img_directory)
+                print("The new directory is created!")
+
+
+            #save body images
+            for ind, body in zip(new_individuals, bodies):
+                render = Render()
+                id = ind.id
+                img_path = f'database/body_images/generation_{self.generation_index}/individual_{id}.png'
+                render.render_robot(body.core, img_path)
+
+
             async with AsyncSession(self.__database) as session:
                 async with session.begin():
                     await self.__save_generation_using_session(

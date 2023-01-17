@@ -1,7 +1,9 @@
+import math
+
 import cairo
 from .canvas import Canvas
 from .grid import Grid
-from revolve2.core.modular_robot import Core, ActiveHinge, Brick
+from revolve2.core.modular_robot import Core, ActiveHinge, Brick, PassiveBone
 
 
 class Render:
@@ -15,7 +17,7 @@ class Render:
     RIGHT = 1
     LEFT = 2
 
-    def parse_body_to_draw(self, canvas, module, slot):
+    def parse_body_to_draw(self, canvas, module, slot, parent_rotation):
         """
         Parse the body to the canvas to draw the png
         @param canvas: instance of the Canvas class
@@ -28,12 +30,21 @@ class Render:
             canvas.draw_controller(module.id)
         elif isinstance(module, ActiveHinge):
             canvas.move_by_slot(slot)
-            Canvas.rotating_orientation = module._absolute_rotation
+            absolute_rotation = (parent_rotation + module.rotation) % math.pi
+            Canvas.rotating_orientation = absolute_rotation
             canvas.draw_hinge(module.id)
+            canvas.draw_connector_to_parent()
+        elif isinstance(module, PassiveBone):
+            canvas.move_by_slot(slot)
+            absolute_rotation = (parent_rotation + module.rotation) % math.pi
+            Canvas.rotating_orientation = absolute_rotation
+            canvas.draw_bone(module.id, module._size)
+
             canvas.draw_connector_to_parent()
         elif isinstance(module, Brick):
             canvas.move_by_slot(slot)
-            Canvas.rotating_orientation = module._absolute_rotation
+            absolute_rotation = (parent_rotation + module.rotation) % math.pi
+            Canvas.rotating_orientation = absolute_rotation
             canvas.draw_module(module.id)
             canvas.draw_connector_to_parent()
 
@@ -42,7 +53,7 @@ class Render:
             for core_slot, child_module in enumerate(module.children):
                 if child_module is None:
                     continue
-                self.parse_body_to_draw(canvas, child_module, core_slot)
+                self.parse_body_to_draw(canvas, child_module, core_slot, module.rotation)
             canvas.move_back()
         else:
             # Element has no children, move back to previous state
@@ -55,7 +66,7 @@ class Render:
         @param slot: attachment of parent slot
         @param include_sensors: add sensors to visisted_cooridnates if True
         """
-        if isinstance(module, ActiveHinge) or isinstance(module, Brick):
+        if isinstance(module, ActiveHinge) or isinstance(module, PassiveBone) or isinstance(module, Brick):
             self.grid.move_by_slot(slot)
             self.grid.add_to_visited(include_sensors, False)
         if module.has_children():
@@ -85,7 +96,7 @@ class Render:
         cv.set_position(core_position[0], core_position[1])
 
         # Draw body of robot
-        self.parse_body_to_draw(cv, body, Render.FRONT)
+        self.parse_body_to_draw(cv, body, Render.FRONT, 0)
 
         # Draw sensors after, so that they don't get overdrawn
         #cv.draw_sensors()
