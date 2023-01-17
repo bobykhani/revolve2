@@ -127,18 +127,25 @@ def __evaluate_cppn(
     outputs = body_net.Output()
 
     # get module type from output probabilities
-    type_probs = [outputs[0], outputs[1], outputs[2], outputs[5]]
+    type_probs = [outputs[0], outputs[1], outputs[2], outputs[3]]
     types = [None, Brick, ActiveHinge, PassiveBone]
     module_type = types[type_probs.index(min(type_probs))]
 
     # get rotation from output probabilities
-    rotation_probs = [outputs[3], outputs[4]]
+    rotation_probs = [outputs[4], outputs[5]]
     rotation = rotation_probs.index(min(rotation_probs))
-    size = 0
-    if outputs[5]>0.5:
-        size = 0.2
-    else:
-        size = 0.1
+
+    #change range to bone size range
+    #new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
+
+    #Y = (((outputs[6] - 0) / (1 - 0)) * (0.2 - 0.1)) + 0.1
+    Y = ((outputs[6] - 0) / (1 - 0)) * (0.2 - 0.1) + 0.1
+
+    size = Y #0
+    # if outputs[5]>0.5:
+    #     size = 0.2
+    # else:
+    #     size = 0.1
 
     return (module_type, rotation, size)
 

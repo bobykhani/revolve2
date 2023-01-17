@@ -52,6 +52,8 @@ class FloatSerializer(Serializer[float]):
                          modules_count=f['modules_count'],
                          hinge_count=f['hinge_count'],
                          brick_count=f['brick_count'],
+                         bone_count=f['bone_count'],
+                         bone_size_sum=f['bone_size_sum'],
                          hinge_prop=f['hinge_prop'],
                          brick_prop=f['brick_prop'],
                          branching_count=f['branching_count'],
@@ -108,6 +110,8 @@ class FloatSerializer(Serializer[float]):
             measures['head_balance'] = items[i].head_balance
             measures['modules_count'] = items[i].modules_count
             measures['hinge_count'] = items[i].hinge_count
+            measures['bone_count'] = items[i].bone_count
+            measures['bone_size_sum'] = items[i].bone_size_sum
             measures['brick_count'] = items[i].brick_count
             measures['hinge_prop'] = items[i].hinge_prop
             measures['brick_prop'] = items[i].brick_prop
@@ -154,6 +158,8 @@ class DbFloat(DbBase):
     modules_count = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
     hinge_count = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
     brick_count = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
+    bone_count = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
+    bone_size_sum = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
     hinge_prop = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
     brick_prop = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
     branching_count = sqlalchemy.Column(sqlalchemy.Float, nullable=True)

@@ -9,7 +9,7 @@ from revolve2.core.physics.running import (
     ActorState
 )
 
-from revolve2.core.modular_robot import Core, ActiveHinge, Brick
+from revolve2.core.modular_robot import Core, ActiveHinge, Brick, PassiveBone
 
 
 class Measure:
@@ -175,6 +175,8 @@ class Measure:
             self._measures['hinge_ratio'] = 0
             self._measures['hinge_horizontal'] = 0
             self._measures['hinge_vertical'] = 0
+            self._measures['bone_count'] = 0
+            self._measures['bone_size_sum'] = 0
 
         if module is None:
             module = self._phenotype_body.core
@@ -184,6 +186,10 @@ class Measure:
             #     self._measures['hinge_horizontal'] += 1
             # else:
             #     self._measures['hinge_vertical'] += 1
+        elif isinstance(module, PassiveBone):
+            self._measures['bone_count'] += 1
+            self._measures['bone_size_sum'] += module._size
+
         elif isinstance(module, Brick):
             self._measures['brick_count'] += 1
 

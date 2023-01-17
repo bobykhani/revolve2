@@ -476,12 +476,14 @@ class _ActorBuilder:
             orientation: Quaternion,
             size = 0.1,
     ) -> None:
+        if size<0.1:
+            size = 0.1
         BOUNDING_BOX = Vector3([size, 0.01, 0.01])  # meter
         MASS = 0.030  # kg
-        if size == 0.1:
-            CHILD_OFFSET = 0.1 / 2.0  # meter
-        else:
-            CHILD_OFFSET = 0.2 / 2.0  # meter
+        # if size == 0.1:
+        CHILD_OFFSET = size / 2.0  # meter
+        # else:
+        #     CHILD_OFFSET = size / 2.0  # meter
 
         position = attachment_point + orientation * Vector3(
             [BOUNDING_BOX[0] / 2.0, 0.0, 0.0]
