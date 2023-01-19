@@ -545,7 +545,7 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
                                        self.__latest_states[i] for i in old_survivors
                                    ] + survived_new_states
 
-            self.__generation_index += 1
+            #self.__generation_index += 1
 
             # calculates relative measures: it has to be sequential because they may depend on each other in pop level
             # for i in range(len(self.__latest_population)):
@@ -562,23 +562,6 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
             #         genotype_measures=self.__latest_measures[i])._return_only_relative())
 
             # save generation and possibly measures of initial population            # and let user save their state
-            bodies = [body_develop(ind.genotype.body) for ind in new_individuals]
-
-            img_directory = f'database/body_images/generation_{self.generation_index}/'
-            # Check whether the specified path exists or not
-            isExist = os.path.exists(img_directory)
-            if not isExist:
-                # Create a new directory because it does not exist
-                os.makedirs(img_directory)
-                print("The new directory is created!")
-
-
-            #save body images
-            for ind, body in zip(new_individuals, bodies):
-                render = Render()
-                id = ind.id
-                img_path = f'database/body_images/generation_{self.generation_index}/individual_{id}.png'
-                render.render_robot(body.core, img_path)
 
 
             async with AsyncSession(self.__database) as session:
@@ -801,6 +784,24 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
             # print(len(rows), len(latest_relative_measures))
             # for i, row in enumerate(rows):
                 # row.diversity = latest_relative_measures[i]['diversity']
+        bodies = [body_develop(ind.genotype.body) for ind in self.__latest_population]
+
+        img_directory = f'database/body_images/generation_{self.generation_index}/'
+        # Check whether the specified path exists or not
+        isExist = os.path.exists(img_directory)
+        if not isExist:
+            # Create a new directory because it does not exist
+            os.makedirs(img_directory)
+            print("The new directory is created!")
+
+        # save body images
+        for ind, body in zip(self.__latest_population, bodies):
+            render = Render()
+            id = ind.id
+            img_path = f'database/body_images/generation_{self.generation_index}/individual_{id}.png'
+            render.render_robot(body.core, img_path)
+
+
 
         # save current optimizer state
         session.add(
