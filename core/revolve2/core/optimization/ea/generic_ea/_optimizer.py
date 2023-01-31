@@ -17,7 +17,7 @@ from revolve2.core.modular_robot import MeasureRelative
 from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v1 import (
     develop_v1 as body_develop)
 
-from core.revolve2.core.modular_robot.render.render import Render
+from revolve2.core.modular_robot.render.render import Render
 from ._database import (
     DbBase,
     DbEAOptimizer,
@@ -786,7 +786,9 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
                 # row.diversity = latest_relative_measures[i]['diversity']
         bodies = [body_develop(ind.genotype.body) for ind in self.__latest_population]
 
-        img_directory = f'database/body_images/generation_{self.generation_index}/'
+        folder = str(self._EAOptimizer__database.engine.url).replace('db.sqlite','').replace('sqlite+aiosqlite:///./','')
+
+        img_directory = f'{folder}/body_images/generation_{self.generation_index}/'
         # Check whether the specified path exists or not
         isExist = os.path.exists(img_directory)
         if not isExist:
@@ -798,7 +800,7 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
         for ind, body in zip(self.__latest_population, bodies):
             render = Render()
             id = ind.id
-            img_path = f'database/body_images/generation_{self.generation_index}/individual_{id}.png'
+            img_path = f'{folder}/body_images/generation_{self.generation_index}/individual_{id}.png'
             render.render_robot(body.core, img_path)
 
 

@@ -61,7 +61,7 @@ def develop_v1(
     :returns: The create body.
     :raises RuntimeError: In case a module is encountered that is not supported.
     """
-    max_parts = 10
+    max_parts = 15
 
     body_net = multineat.NeuralNetwork()
     genotype.genotype.BuildPhenotype(body_net)
@@ -139,7 +139,7 @@ def __evaluate_cppn(
     #new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
 
     #Y = (((outputs[6] - 0) / (1 - 0)) * (0.2 - 0.1)) + 0.1
-    Y = ((outputs[6] - 0) / (1 - 0)) * (0.2 - 0.1) + 0.1
+    Y = ((outputs[6] - (-1)) / (1 - (-1))) * (0.2 - 0.1) + 0.1
 
     size = Y #0
     # if outputs[5]>0.5:
