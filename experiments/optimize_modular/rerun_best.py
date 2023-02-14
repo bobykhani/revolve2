@@ -7,7 +7,7 @@ from revolve2.core.optimization.ea.generic_ea import DbEAOptimizerIndividual
 from revolve2.runners.mujoco import ModularRobotRerunner
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.future import select
-
+from revolve2.standard_resources import terrains
 
 async def main() -> None:
     """Run the script."""
@@ -15,9 +15,9 @@ async def main() -> None:
     async with AsyncSession(db) as session:
         best_individual = (
             await session.execute(
-                select(DbEAOptimizerIndividual, DbFloat).offset(50)
-                .filter(DbEAOptimizerIndividual.float_id == '14446')
-                .order_by(DbFloat.speed_y.desc())
+                select(DbEAOptimizerIndividual, DbFloat)#.offset(100)
+                .filter(DbEAOptimizerIndividual.float_id == '9')
+                #.order_by(DbFloat.speed_y.desc())
             )
         ).first()
 
@@ -32,7 +32,7 @@ async def main() -> None:
         )[0]
 
     rerunner = ModularRobotRerunner()
-    await rerunner.rerun(develop(genotype), 60)
+    await rerunner.rerun(develop(genotype), 60, terrain= terrains.crater([20,20],0.3,1))
 
 
 if __name__ == "__main__":

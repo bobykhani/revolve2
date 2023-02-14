@@ -39,8 +39,8 @@ class Render:
             absolute_rotation = (parent_rotation + module.rotation) % math.pi
             Canvas.rotating_orientation = absolute_rotation
             canvas.draw_bone(module.id, module._size)
-
             canvas.draw_connector_to_parent()
+
         elif isinstance(module, Brick):
             canvas.move_by_slot(slot)
             absolute_rotation = (parent_rotation + module.rotation) % math.pi

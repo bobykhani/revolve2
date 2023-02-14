@@ -10,6 +10,7 @@ from revolve2.core.database import open_async_database_sqlite
 from revolve2.core.optimization import DbId
 from revolve2.core.optimization import ProcessIdGen, Process
 from revolve2.core.config import Config
+from revolve2.standard_resources import terrains
 
 async def main() -> None:
     args = Config()._get_params()
@@ -19,15 +20,16 @@ async def main() -> None:
     # number of initial mutations for body and brain CPPNWIN networks
     NUM_INITIAL_MUTATIONS = 10
 
-    SIMULATION_TIME = 10
-    SAMPLING_FREQUENCY = 10
+    SIMULATION_TIME = 30
+    SAMPLING_FREQUENCY = 8
     CONTROL_FREQUENCY = 60
 
-    POPULATION_SIZE = 100
-    OFFSPRING_SIZE = 50
-    NUM_GENERATIONS = 100
+    POPULATION_SIZE = 10
+    OFFSPRING_SIZE = 5
+    NUM_GENERATIONS = 10
 
     FITNESS_MEASURE = 'speed_y'
+
 
     logging.basicConfig(
         level=logging.INFO,

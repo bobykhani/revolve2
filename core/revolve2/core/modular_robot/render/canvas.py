@@ -33,6 +33,8 @@ class Canvas:
 	# Rotating orientation in regard to parent module
 	rotating_orientation = 0
 
+	counter = 0
+
 	def __init__(self, width, height, scale):
 		"""Instantiate context and surface"""
 		self.surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, width*scale, height*scale)
@@ -156,8 +158,8 @@ class Canvas:
 
 	def sign_id(self, mod_id):
 		"""Sign module with the id on the upper Canvas.LEFT corner of block"""
-		self.context.set_font_size(0.3)
-		self.context.move_to(Canvas.x_pos, Canvas.y_pos + 0.4)
+		self.context.set_font_size(0.2)
+		self.context.move_to(Canvas.x_pos+0.3, Canvas.y_pos + 0.5)
 		self.context.set_source_rgb(0, 0, 0)
 		if type(mod_id) is int:
 			self.context.show_text(str(mod_id))
@@ -193,14 +195,46 @@ class Canvas:
 		self.sign_id(mod_id)
 		Canvas.movement_stack.append([Canvas.x_pos, Canvas.y_pos, Canvas.orientation, Canvas.rotating_orientation])
 
+	def normalize(self, value, a=[0.1, 0.2], b=[0.2, 1]):
+		return b[0] + (value - a[0]) * (b[1] - b[0]) / (a[1] - a[0])
+
 	def draw_bone(self, mod_id, module_size):
 		"""Draw a hinge (blue) on the previous object"""
 
-		self.context.rectangle(Canvas.x_pos, Canvas.y_pos, 1, 1)
-		if (Canvas.rotating_orientation == 0):
-			self.context.set_source_rgb(0.39, 0.86, 0.86)
-		else:
-			self.context.set_source_rgb(0.39, 0.86, 0.86)
+		self.context.set_source_rgb(0.0, self.normalize(module_size), 0.0)
+
+
+		if (Canvas.previous_move == -1 or
+		(Canvas.previous_move == Canvas.FRONT and Canvas.orientation == Canvas.FRONT) or
+		(Canvas.previous_move == Canvas.RIGHT and Canvas.orientation == Canvas.LEFT) or
+		(Canvas.previous_move == Canvas.LEFT and Canvas.orientation == Canvas.RIGHT) or
+		(Canvas.previous_move == Canvas.BACK and Canvas.orientation == Canvas.BACK)):
+			self.context.rectangle(Canvas.x_pos+0.25, Canvas.y_pos, 0.5, 1)
+		elif ((Canvas.previous_move == Canvas.RIGHT and Canvas.orientation == Canvas.FRONT) or
+		(Canvas.previous_move == Canvas.BACK and Canvas.orientation == Canvas.LEFT) or
+		(Canvas.previous_move == Canvas.FRONT and Canvas.orientation == Canvas.RIGHT) or
+		(Canvas.previous_move == Canvas.LEFT and Canvas.orientation == Canvas.BACK)):
+			self.context.rectangle(Canvas.x_pos, Canvas.y_pos+0.25, 1, 0.5)
+		elif ((Canvas.previous_move == Canvas.BACK and Canvas.orientation == Canvas.FRONT) or
+		(Canvas.previous_move == Canvas.LEFT and Canvas.orientation == Canvas.LEFT) or
+		(Canvas.previous_move == Canvas.RIGHT and Canvas.orientation == Canvas.RIGHT) or
+		(Canvas.previous_move == Canvas.FRONT and Canvas.orientation == Canvas.BACK)):
+			self.context.rectangle(Canvas.x_pos+0.25, Canvas.y_pos, 0.5, 1)
+		elif ((Canvas.previous_move == Canvas.LEFT and Canvas.orientation == Canvas.FRONT) or
+		(Canvas.previous_move == Canvas.FRONT and Canvas.orientation == Canvas.LEFT) or
+		(Canvas.previous_move == Canvas.BACK and Canvas.orientation == Canvas.RIGHT) or
+		(Canvas.previous_move == Canvas.RIGHT and Canvas.orientation == Canvas.BACK)):
+			self.context.rectangle(Canvas.x_pos, Canvas.y_pos+0.25, 1, 0.5)
+
+
+
+		# if (Canvas.previous_move == Canvas.BACK and Canvas.orientation == Canvas.BACK) and (Canvas.orientation == Canvas.BACK or Canvas.orientation == Canvas.FRONT):
+		# 	self.context.rectangle(Canvas.x_pos+0.25, Canvas.y_pos, 0.5, 1)
+		#
+		# if (Canvas.orientation == Canvas.LEFT or Canvas.orientation == Canvas.RIGHT):
+		# 	self.context.rectangle(Canvas.x_pos, Canvas.y_pos+0.25, 1, 0.5)
+
+
 		self.context.fill_preserve()
 		self.context.set_source_rgb(0, 0, 0)
 		self.context.set_line_width(0.01)
@@ -209,6 +243,7 @@ class Canvas:
 		self.sign_id(mod_id)
 		self.write_size(round(module_size,2))
 		Canvas.movement_stack.append([Canvas.x_pos, Canvas.y_pos, Canvas.orientation, Canvas.rotating_orientation])
+
 
 	def draw_module(self, mod_id):
 		"""Draw a module (red) on the previous object"""
@@ -320,7 +355,7 @@ class Canvas:
 	def write_size(self, mod_size):
 		"""Sign module with the id on the upper left corner of block"""
 		self.context.set_font_size(0.2)
-		self.context.move_to(Canvas.x_pos+ 0.4, Canvas.y_pos + 0.7)
+		self.context.move_to(Canvas.x_pos+ 0.35, Canvas.y_pos + 0.7)
 		self.context.set_source_rgb(0, 0, 0)
 		self.context.show_text(str(mod_size))
 

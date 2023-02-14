@@ -35,7 +35,7 @@ def random_v1(
         multineat_params,
         output_activation_func,
         5,  # bias(always 1), pos_x, pos_y, pos_z, chain_length
-        7,  # empty, brick, activehinge, rot0, rot90, PassiveBone, PBSize
+        6,  # empty, brick, activehinge, rot0, rot90, PassiveBone, PBSize
         num_initial_mutations,
     )
 
@@ -132,14 +132,14 @@ def __evaluate_cppn(
     module_type = types[type_probs.index(min(type_probs))]
 
     # get rotation from output probabilities
-    rotation_probs = [outputs[4], outputs[5]]
+    rotation_probs = [outputs[4]]
     rotation = rotation_probs.index(min(rotation_probs))
 
     #change range to bone size range
     #new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
 
     #Y = (((outputs[6] - 0) / (1 - 0)) * (0.2 - 0.1)) + 0.1
-    Y = ((outputs[6] - (-1)) / (1 - (-1))) * (0.2 - 0.1) + 0.1
+    Y = ((outputs[5] - (-1)) / (1 - (-1))) * (0.2 - 0.1) + 0.1
 
     size = Y #0
     # if outputs[5]>0.5:

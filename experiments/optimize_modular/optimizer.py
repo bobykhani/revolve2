@@ -38,6 +38,8 @@ from sqlalchemy.future import select
 from revolve2.core.modular_robot._measure import Measure
 from revolve2.core.modular_robot._measure_relative import MeasureRelative
 
+from revolve2.standard_resources import terrains
+
 
 class Optimizer(EAOptimizer[Genotype, float]):
     """
@@ -45,6 +47,10 @@ class Optimizer(EAOptimizer[Genotype, float]):
 
     Uses the generic EA optimizer as a base.
     """
+
+    #_TERRAIN = terrains.flat()
+    _TERRAIN = terrains.crater([20,20],0.3,1)
+
     _db_id: DbId
     # _process_id: int
 
@@ -240,7 +246,7 @@ class Optimizer(EAOptimizer[Genotype, float]):
         return True
 
     def _init_runner(self) -> None:
-        self._runner = LocalRunner(headless=True)
+        self._runner = LocalRunner(headless=True,num_simulators=4)
 
     def _select_parents(
         self,
@@ -310,6 +316,7 @@ class Optimizer(EAOptimizer[Genotype, float]):
             actor, controller = develop(genotype).make_actor_and_controller()
             bounding_box = actor.calc_aabb()
             env = Environment(EnvironmentActorController(controller))
+            env.static_geometries.extend(self._TERRAIN.static_geometry)
             env.actors.append(
                 PosedActor(
                     actor,
