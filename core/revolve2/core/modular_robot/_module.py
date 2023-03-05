@@ -79,20 +79,24 @@ class Module:
             raise NotFinalizedError()
         return self._id
 
-    @id.setter
-    def id(self, id: int) -> None:
-        """
-        Set the id of this module.
-
-        Can only be set once.
-        Don't do this manually but let the modular robot body's `finalize` function do it.
-
-        :param id: The id of the module.
-        :raises RuntimeError: In case the id was already set before.
-        """
-        if self._id is not None:
-            raise RuntimeError("Cannot set id twice.")
-        self._id = id
+    # @id.setter
+    # def id(self, id: int) -> None:
+    #     """
+    #     Set the id of this module.
+    #
+    #     Can only be set once.
+    #     Don't do this manually but let the modular robot body's `finalize` function do it.
+    #
+    #     :param id: The id of the module.
+    #     :raises RuntimeError: In case the id was already set before.
+    #     """
+    #     if self._id is not None:
+    #         raise RuntimeError("Cannot set id twice.")
+    #     self._id = id
+    def id(self) -> int:
+        if self._id is None:
+            raise NotFinalizedError()
+        return self._id
 
     def neighbours(self, within_range: int) -> List[Module]:
         """

@@ -14,8 +14,8 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from revolve2.core.modular_robot import MeasureRelative
-from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v1 import (
-    develop_v1 as body_develop)
+from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v2 import (
+    Develop as body_develop)
 
 from revolve2.core.modular_robot.render.render import Render
 from ._database import (
@@ -784,7 +784,8 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
             # print(len(rows), len(latest_relative_measures))
             # for i, row in enumerate(rows):
                 # row.diversity = latest_relative_measures[i]['diversity']
-        bodies = [body_develop(ind.genotype.body) for ind in self.__latest_population]
+        #b = body_develop.develop(ind.genotype.body)
+        bodies = [body_develop(ind.genotype.body).develop() for ind in self.__latest_population]
 
         folder = str(self._EAOptimizer__database.engine.url).replace('db.sqlite','').replace('sqlite+aiosqlite:///./','')
 
@@ -801,7 +802,7 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
             render = Render()
             id = ind.id
             img_path = f'{folder}/body_images/generation_{self.generation_index}/individual_{id}.png'
-            render.render_robot(body.core, img_path)
+            render.render_robot(body[0].core, img_path)
 
 
 

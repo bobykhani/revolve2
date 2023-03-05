@@ -25,7 +25,7 @@ class BrainCpgNetworkNeighbour(Brain, ABC):
         :returns: The created controller.
         """
         # get active hinges and sort them according to dof_ids
-        active_hinges_unsorted = body.find_active_hinges()
+        active_hinges_unsorted = body[0].find_active_hinges()
         active_hinge_map = {
             active_hinge.id: active_hinge for active_hinge in active_hinges_unsorted
         }

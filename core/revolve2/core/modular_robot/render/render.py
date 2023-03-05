@@ -14,8 +14,8 @@ class Render:
 
     FRONT = 0
     BACK = 3
-    RIGHT = 1
-    LEFT = 2
+    RIGHT = 2
+    LEFT = 1
 
     def parse_body_to_draw(self, canvas, module, slot, parent_rotation):
         """

@@ -32,7 +32,7 @@ class Config():
         parser.add_argument(
             "--max_modules",
             required=False,
-            default=10,
+            default=15,
             type=int,
             help="",
         )

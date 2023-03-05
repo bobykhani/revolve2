@@ -21,7 +21,7 @@ class Measure:
         self._states = states
         # TODO: _genotype_idx: obsolete variable
         self._genotype_idx = genotype_idx
-        self._phenotype_body = phenotype.body
+        self._phenotype_body = phenotype.body[0]
         self._phenotype_brain = phenotype.brain
         self._generation = generation
         self._simulation_time = simulation_time

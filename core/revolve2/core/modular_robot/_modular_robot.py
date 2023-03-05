@@ -29,6 +29,6 @@ class ModularRobot:
 
         :returns: (the actor, the controller)
         """
-        actor, dof_ids = self.body.to_actor()
+        actor, dof_ids = self.body[0].to_actor()
         controller = self.brain.make_controller(self.body, dof_ids)
         return (actor, controller)

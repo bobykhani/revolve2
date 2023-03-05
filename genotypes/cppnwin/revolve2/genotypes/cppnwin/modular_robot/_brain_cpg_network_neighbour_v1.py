@@ -49,7 +49,7 @@ class BrainCpgNetworkNeighbourV1(ModularRobotBrainCpgNetworkNeighbour):
                 ],
             )
             for pos in [
-                body.grid_position(active_hinge) for active_hinge in active_hinges
+                body[0].grid_position(active_hinge) for active_hinge in active_hinges
             ]
         ]
 
@@ -67,7 +67,7 @@ class BrainCpgNetworkNeighbourV1(ModularRobotBrainCpgNetworkNeighbour):
                 ],
             )
             for (pos1, pos2) in [
-                (body.grid_position(active_hinge1), body.grid_position(active_hinge2))
+                (body[0].grid_position(active_hinge1), body[0].grid_position(active_hinge2))
                 for (active_hinge1, active_hinge2) in connections
             ]
         ]
