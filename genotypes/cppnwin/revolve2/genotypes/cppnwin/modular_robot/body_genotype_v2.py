@@ -18,15 +18,15 @@ def random_v1(
         n_env_conditions: int,
         plastic_body: int,
 ) -> Genotype:
-    if plastic_body == 0:
+    if plastic_body != 0:
         return base_random_v1(
             innov_db,
             rng,
             multineat_params,
             output_activation_func,
-            # 3,  # bias(always 1), pos_x, pos_y
-            2,  # pos_x, pos_y
-            4,  # brick, activehinge, rot0, rot90
+            # 4,  # bias(always 1), pos_x, pos_y, inclined
+            5,  # pos_x, pos_y, inclined
+            6,  # brick, activehinge, rot0, rot90
             num_initial_mutations,
         )
     else:
@@ -35,8 +35,8 @@ def random_v1(
             rng,
             multineat_params,
             output_activation_func,
-            # 4,  # bias(always 1), pos_x, pos_y, inclined
-            5,  # pos_x, pos_y, inclined
+            # 3,  # bias(always 1), pos_x, pos_y
+            5,  # pos_x, pos_y
             6,  # brick, activehinge, rot0, rot90
             num_initial_mutations,
         )
