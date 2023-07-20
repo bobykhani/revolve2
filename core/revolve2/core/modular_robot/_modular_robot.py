@@ -32,3 +32,14 @@ class ModularRobot:
         actor, dof_ids = self.body[0].to_actor()
         controller = self.brain.make_controller(self.body, dof_ids)
         return (actor, controller)
+
+
+    def make_actor_and_controller(self) -> Tuple[Actor, ActorController]:
+        """
+        Transform this modular robot into a physics actor and corresponding controller.
+
+        :returns: (the actor, the controller)
+        """
+        actor, dof_ids = self.body[0].to_actor()
+        controller = self.brain.make_controller(self.body, dof_ids)
+        return (actor, controller)

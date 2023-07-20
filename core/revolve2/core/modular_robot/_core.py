@@ -8,8 +8,8 @@ class Core(Module):
 
     FRONT = 0
     RIGHT = 1
-    BACK = 2
-    LEFT = 3
+    BACK = 3
+    LEFT = 2
 
     def __init__(self, rotation: float):
         """

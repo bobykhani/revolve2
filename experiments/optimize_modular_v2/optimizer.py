@@ -48,8 +48,8 @@ class Optimizer(EAOptimizer[Genotype, float]):
     Uses the generic EA optimizer as a base.
     """
 
-    #_TERRAIN = terrains.flat()
-    _TERRAIN = terrains.crater([20,20],0.3,1)
+    _TERRAIN = terrains.flat()
+    #_TERRAIN = terrains.crater([20,20],0.3,1)
 
     _db_id: DbId
     # _process_id: int

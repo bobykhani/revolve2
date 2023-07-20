@@ -25,7 +25,7 @@ async def main() -> None:
     CONTROL_FREQUENCY = 60
 
     POPULATION_SIZE = 10
-    OFFSPRING_SIZE = 5
+    OFFSPRING_SIZE = 10
     NUM_GENERATIONS = 10
 
     FITNESS_MEASURE = 'speed_y'

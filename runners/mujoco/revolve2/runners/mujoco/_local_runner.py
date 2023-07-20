@@ -9,6 +9,7 @@ import mujoco
 import mujoco_viewer
 import numpy as np
 import numpy.typing as npt
+from ._openglvision import OpenGLVision
 
 try:
     import logging
@@ -44,6 +45,16 @@ from revolve2.core.physics.running import (
 )
 
 
+class TestController(object):
+    def __init__(self, model):
+        self.model = model
+        self.action = None
+
+    def get_action(self, observation):
+        return self.action
+
+    def set_action(self, action):
+        self.action = action
 class LocalRunner(Runner):
     """Runner for simulating using Mujoco."""
 
@@ -76,6 +87,7 @@ class LocalRunner(Runner):
         self._start_paused = start_paused
         self._num_simulators = num_simulators
 
+
     @classmethod
     def _run_environment(
         cls,
@@ -91,6 +103,8 @@ class LocalRunner(Runner):
         logging.info(f"Environment {env_index}")
 
         model = cls._make_model(env_descr)
+
+        # vision_obj = OpenGLVision(model, (10, 10), True)
 
         # TODO initial dof state
         data = mujoco.MjData(model)
@@ -143,6 +157,13 @@ class LocalRunner(Runner):
                 last_control_time = math.floor(time / control_step) * control_step
                 control_user = ActorControl()
                 env_descr.controller.control(control_step, control_user)
+                #current_vision = vision_obj.process(model, data)
+                # rotate vision by 180 degrees
+                #current_vision = np.rot90(current_vision, 2)
+                #convert numpy array vision to image and save as png
+                #cv2.imwrite(f"Camera/{env_index}_{time}.png", current_vision)
+
+
                 actor_targets = control_user._dof_targets
                 actor_targets.sort(key=lambda t: t[0])
                 targets = [
@@ -160,6 +181,18 @@ class LocalRunner(Runner):
                         time, cls._get_actor_states(env_descr, data, model)
                     )
                 )
+
+            controller = TestController(model)
+            #make a random value for the action
+            act = np.array([])
+#            act = np.random.uniform(-np.pi,np.pi, 16)
+            act = env_descr.controller.actor_controller._state+1
+            print(act)
+            # make an action from the controller
+            act = controller.set_action(action = act)#[1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0])
+
+            action = controller.get_action(act)
+            data.ctrl[:] = action
 
             # step simulation
             mujoco.mj_step(model, data)
@@ -254,6 +287,13 @@ class LocalRunner(Runner):
 
         env_mjcf.option.gravity = [0, 0, -9.81]
 
+        env_mjcf.worldbody.add(
+            "geom",
+            type="sphere",
+            pos=[1.0, 1.0, 0.0],
+            size=[0.2],  # size of the sphere
+            rgba=[0.0, 0.0, 1.0, 1.0],  # color of the sphere
+        )
         heightmaps: List[geometry.Heightmap] = []
         for geo in env_descr.static_geometries:
             if isinstance(geo, geometry.Plane):
@@ -297,6 +337,7 @@ class LocalRunner(Runner):
             directional=True,
             castshadow=False,
         )
+
         env_mjcf.visual.headlight.active = 0
 
         for actor_index, posed_actor in enumerate(env_descr.actors):
@@ -331,6 +372,19 @@ class LocalRunner(Runner):
                     kv=0.05,
                     joint=robot.find(namespace="joint", identifier=joint.name),
                 )
+            aabb = posed_actor.actor.calc_aabb()
+            fps_cam_pos = [
+                aabb.offset.x + aabb.size.x / 2,
+                aabb.offset.y,
+                aabb.offset.z
+            ]
+            # robot.worldbody.add("camera", name="vision", mode="fixed", dclass=robot.full_identifier,
+            #                     pos=fps_cam_pos, xyaxes="0 -1 0 0 0 1")
+            robot.worldbody.add('site',
+                                name=robot.full_identifier[:-1] + "_camera",
+                                pos=fps_cam_pos, rgba=[0, 0, 1, 1],
+                                type="ellipsoid", size=[0.0001, 0.025, 0.025])
+
 
             attachment_frame = env_mjcf.attach(robot)
             attachment_frame.add("freejoint")

@@ -6,6 +6,8 @@ from typing import List
 
 import multineat
 import sqlalchemy
+
+from experiments.optimize_modular_v2.body_spider import make_body_spider
 from revolve2.core.database import IncompatibleError, Serializer
 from revolve2.core.modular_robot import ModularRobot
 from revolve2.genotypes.cppnwin import Genotype as CppnwinGenotype
@@ -280,8 +282,13 @@ def develop(genotype: Genotype) -> ModularRobot:
     :param genotype: The genotype to create the robot from.
     :returns: The created robot.
     """
-    b = body_develop(genotype.body)
-    body = b.develop()
+    bb = 'spider'
+    if bb == 'spider':
+        #body = make_body_spider()
+        body = {0: make_body_spider()}
+    else:
+        b = body_develop(genotype.body)
+        body = b.develop()
     brain = brain_develop(genotype.brain, body)
     return ModularRobot(body, brain)
 
