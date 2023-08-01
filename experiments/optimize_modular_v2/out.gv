@@ -1,0 +1,39 @@
+digraph G {
+concentrate=true;
+splines="ortho";
+rankdir="LR";
+subgraph legend{
+    rank = min;
+    label = "legend";
+    Legend [shape=none, margin=0, label = <
+        <table cellspacing="0" cellpadding="0" border="1"><tr><td>Code2flow Legend</td></tr><tr><td>
+        <table cellspacing="0">
+        <tr><td>Regular function</td><td width="50px" bgcolor='#cccccc'></td></tr>
+        <tr><td>Trunk function (nothing calls this)</td><td bgcolor='#966F33'></td></tr>
+        <tr><td>Leaf function (this calls nothing else)</td><td bgcolor='#6db33f'></td></tr>
+        <tr><td>Function call</td><td><font color='black'>&#8594;</font></td></tr>
+        </table></td></tr></table>
+        >];
+}node_b5bc6da0 [label="248: _init_runner()" name="optimizer::Optimizer._init_runner" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_2021c48b [label="391: _on_generation_checkpoint()" name="optimizer::Optimizer._on_generation_checkpoint" shape="rect" style="rounded,filled" fillcolor="#6db33f" ];
+node_eb8578b2 [label="172: ainit_from_database()" name="optimizer::Optimizer.ainit_from_database" shape="rect" style="rounded,filled" fillcolor="#cccccc" ];
+node_94124c71 [label="80: ainit_new()" name="optimizer::Optimizer.ainit_new" shape="rect" style="rounded,filled" fillcolor="#cccccc" ];
+node_eb8578b2 -> node_b5bc6da0 [color="#56B4E9" penwidth="2"];
+node_eb8578b2 -> node_eb8578b2 [color="#56B4E9" penwidth="2"];
+node_94124c71 -> node_b5bc6da0 [color="#E69F00" penwidth="2"];
+node_94124c71 -> node_2021c48b [color="#E69F00" penwidth="2"];
+node_94124c71 -> node_94124c71 [color="#E69F00" penwidth="2"];
+subgraph cluster_006b0398 {
+    label="File: optimizer";
+    name="optimizer";
+    style="filled";
+    graph[style=dotted];
+    subgraph cluster_1b2af5ec {
+        node_94124c71 node_eb8578b2 node_b5bc6da0 node_2021c48b;
+        label="Class: Optimizer";
+        name="Optimizer";
+        style="filled";
+        graph[style=dotted];
+    };
+};
+}

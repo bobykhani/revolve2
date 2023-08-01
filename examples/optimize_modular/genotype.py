@@ -17,12 +17,17 @@ from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v1 import (
 from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v1 import (
     random_v1 as body_random,
 )
-from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_cpg_v1 import (
+# from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_cpg_v1 import (
+#     develop_v1 as brain_develop,
+# )
+# from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_cpg_v1 import (
+#     random_v1 as brain_random,
+# )
+from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_ann import (
     develop_v1 as brain_develop,
 )
-from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_cpg_v1 import (
+from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_ann import (
     random_v1 as brain_random,
-)
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.future import select

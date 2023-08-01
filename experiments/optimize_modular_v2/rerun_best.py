@@ -16,7 +16,7 @@ async def main() -> None:
         best_individual = (
             await session.execute(
                 select(DbEAOptimizerIndividual, DbFloat)#.offset(100)
-                #.filter(DbEAOptimizerIndividual.float_id == '2225')
+                .filter(DbEAOptimizerIndividual.float_id == '3054')
                 .order_by(DbFloat.speed_y.desc())
             )
         ).first()
@@ -32,8 +32,8 @@ async def main() -> None:
         )[0]
 
     rerunner = ModularRobotRerunner()
-    await rerunner.rerun(develop(genotype), 60, terrain= terrains.crater([20,20],0.3,1))
-#    await rerunner.rerun(develop(genotype), 60, terrain= terrains.flat())
+    #await rerunner.rerun(develop(genotype), 60, terrain= terrains.crater([20,20],0.3,1))
+    await rerunner.rerun(develop(genotype), 60, terrain= terrains.flat())
 
 
 if __name__ == "__main__":

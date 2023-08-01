@@ -1,78 +1,55 @@
-from typing import List, Tuple, cast
-
+from typing import List, Set, Tuple, cast
+import random
 import multineat
+from squaternion import Quaternion
+import pprint
+import numpy as np
+import math
+
 from revolve2.core.modular_robot import ActiveHinge, Body
-from revolve2.core.modular_robot.brains import (
-    BrainCpgNetworkNeighbour as ModularRobotBrainCpgNetworkNeighbour,
+from revolve2.actor_controller import ActorController
+from revolve2.core.physics.running import (
+    BatchResults,
 )
 
-
-class ProprioceptionCPPNNetwork(ModularRobotBrainCpgNetworkNeighbour):
-    """
-    A CPG brain based on `ModularRobotBrainCpgNetworkNeighbour` that creates weights from a CPPNWIN network.
-
-    Weights are determined by querying the CPPN network with inputs:
-    (hinge1_posx, hinge1_posy, hinge1_posz, hinge2_posx, hinge2_posy, hinge3_posz)
-    If the weight in internal, hinge1 and hinge2 position will be the same.
-    """
-
+class ProprioceptionCPPNNetwork(ActorController):
     _genotype: multineat.Genome
 
     def __init__(self, genotype: multineat.Genome):
-        """
-        Initialize this object.
-
-        :param genotype: A multineat genome used for determining weights.
-        """
         self._genotype = genotype
+        self._dof_targets = []
+        self._sensors = None
+        self._n_joints = 0
+        self._dof_ranges = 1
+        self._steps = 0
 
-    def _make_weights(
-        self,
-        active_hinges: List[ActiveHinge],
-        connections: List[Tuple[ActiveHinge, ActiveHinge]],
-        body: Body,
-    ) -> Tuple[List[float], List[float]]:
+    def set_sensors(self, sensors: BatchResults):
+        self._sensors = sensors
+
+    def make_controller(self, body: Body, dof_ids: List[int]) -> ActorController:
+        self._n_joints = len(dof_ids)
+        self._dof_targets = [0] * self._n_joints
+
+        return self
+
+    def step(self, dt: float) -> None:
         brain_net = multineat.NeuralNetwork()
         self._genotype.BuildPhenotype(brain_net)
 
-        internal_weights = [
-            self._evaluate_network(
-                brain_net,
-                [
-                    1.0,
-                    float(pos.x),
-                    float(pos.y),
-                    float(pos.z),
-                    float(pos.x),
-                    float(pos.y),
-                    float(pos.z),
-                ],
-            )
-            for pos in [
-                body[0].grid_position(active_hinge) for active_hinge in active_hinges
-            ]
-        ]
+        sin = math.sin(self._steps)
+        self._sensors = [sin] * len(self._sensors)
+        #closed_loop = self._sensors# + sin
+        closed_loop = [sensor + sin for sensor in self._sensors]
 
-        external_weights = [
-            self._evaluate_network(
-                brain_net,
-                [
-                    1.0,
-                    float(pos1.x),
-                    float(pos1.y),
-                    float(pos1.z),
-                    float(pos2.x),
-                    float(pos2.y),
-                    float(pos2.z),
-                ],
-            )
-            for (pos1, pos2) in [
-                (body[0].grid_position(active_hinge1), body[0].grid_position(active_hinge2))
-                for (active_hinge1, active_hinge2) in connections
-            ]
-        ]
+        output = self._evaluate_network(
+            brain_net, closed_loop,
+        )
 
-        return (internal_weights, external_weights)
+        self._dof_targets = list(np.clip(output, a_min=-self._dof_ranges, a_max=self._dof_ranges))
+        self._steps += 1
+
+    def get_dof_targets(self) -> List[float]:
+        return self._dof_targets
 
     @staticmethod
     def _evaluate_network(
@@ -80,4 +57,10 @@ class ProprioceptionCPPNNetwork(ModularRobotBrainCpgNetworkNeighbour):
     ) -> float:
         network.Input(inputs)
         network.ActivateAllLayers()
-        return cast(float, network.Output()[0])  # TODO missing multineat typing
+        return cast(float, network.Output())  # TODO missing multineat typing
+    def serialize(self):
+        pass
+
+    @classmethod
+    def deserialize(cls, data):
+        pass

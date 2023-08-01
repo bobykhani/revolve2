@@ -156,13 +156,15 @@ class LocalRunner(Runner):
             if time >= last_control_time + control_step:
                 last_control_time = math.floor(time / control_step) * control_step
                 control_user = ActorControl()
+                env_descr.controller.actor_controller._sensors = env_descr.controller.actor_controller.get_dof_targets()
                 env_descr.controller.control(control_step, control_user)
+
                 #current_vision = vision_obj.process(model, data)
                 # rotate vision by 180 degrees
                 #current_vision = np.rot90(current_vision, 2)
                 #convert numpy array vision to image and save as png
                 #cv2.imwrite(f"Camera/{env_index}_{time}.png", current_vision)
-
+                # controller.get_action()
 
                 actor_targets = control_user._dof_targets
                 actor_targets.sort(key=lambda t: t[0])
@@ -186,13 +188,13 @@ class LocalRunner(Runner):
             #make a random value for the action
             act = np.array([])
 #            act = np.random.uniform(-np.pi,np.pi, 16)
-            act = env_descr.controller.actor_controller._state+1
-            print(act)
+       ###    act = env_descr.controller.actor_controller._state+1
+       ###     print(act)
             # make an action from the controller
-            act = controller.set_action(action = act)#[1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0])
-
-            action = controller.get_action(act)
-            data.ctrl[:] = action
+        ### act = controller.set_action(action = act)#[1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0])
+            #
+            # action = controller.get_action(act)
+            # data.ctrl[:] = action
 
             # step simulation
             mujoco.mj_step(model, data)
