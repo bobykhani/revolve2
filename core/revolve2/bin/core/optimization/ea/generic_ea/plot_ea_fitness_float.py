@@ -28,7 +28,7 @@ def plot(database: str, db_id: DbId) -> None:
     :param database: Database where the data is stored.
     :param db_id: Id of the evolutionary process to plot.
     """
-    # open the database
+    # open the database_karine_params
     db = open_database_sqlite(database)
     # read the optimizer data into a pandas dataframe
     df = pandas.read_sql(
@@ -69,9 +69,9 @@ def main() -> None:
     """Run this file as a command line tool."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "database",
+        "database_karine_params",
         type=str,
-        help="The database to plot.",
+        help="The database_karine_params to plot.",
     )
     parser.add_argument("db_id", type=str, help="The id of the ea optimizer to plot.")
     args = parser.parse_args()

@@ -20,12 +20,12 @@ async def main() -> None:
     # number of initial mutations for body and brain CPPNWIN networks
     NUM_INITIAL_MUTATIONS = 10
 
-    SIMULATION_TIME = 10
+    SIMULATION_TIME = 20
     SAMPLING_FREQUENCY = 8
-    CONTROL_FREQUENCY = 60
+    CONTROL_FREQUENCY = 5
 
     POPULATION_SIZE = 100
-    OFFSPRING_SIZE = 50
+    OFFSPRING_SIZE = 100
     NUM_GENERATIONS = 100
 
     FITNESS_MEASURE = 'speed_y'
@@ -47,14 +47,14 @@ async def main() -> None:
 
     # random number generator
     rng = Random()
-    rng.seed(1900)
+    rng.seed(600)
 
-    # database
+    # database_karine_params
     database = open_async_database_sqlite("./database", create=True)
 
     # process_id_gen = ProcessIdGen()
 
-    # unique database identifier for optimizer
+    # unique database_karine_params identifier for optimizer
     db_id = DbId.root("test1")
 
     # multineat innovation databases

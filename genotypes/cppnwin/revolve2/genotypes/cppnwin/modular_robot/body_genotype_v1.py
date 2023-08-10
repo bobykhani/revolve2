@@ -22,7 +22,7 @@ def random_v1(
     """
     Create a CPPNWIN genotype for a modular robot body.
 
-    :param innov_db: Multineat innovation database. See Multineat library.
+    :param innov_db: Multineat innovation database_karine_params. See Multineat library.
     :param rng: Random number generator.
     :param multineat_params: Multineat parameters. See Multineat library.
     :param output_activation_func: Activation function for the output layer. See Multineat library.

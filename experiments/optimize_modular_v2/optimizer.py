@@ -110,12 +110,12 @@ class Optimizer(EAOptimizer[Genotype, float]):
         Called when creating an instance using `new`.
 
         :param database: Database to use for this optimizer.
-        :param session: Session to use when saving data to the database during initialization.
+        :param session: Session to use when saving data to the database_karine_params during initialization.
         :param db_id: Unique identifier in the completely program specifically made for this optimizer.
         :param initial_population: List of genotypes forming generation 0.
         :param rng: Random number generator.
-        :param innov_db_body: Innovation database for the body genotypes.
-        :param innov_db_brain: Innovation database for the brain genotypes.
+        :param innov_db_body: Innovation database_karine_params for the body genotypes.
+        :param innov_db_brain: Innovation database_karine_params for the brain genotypes.
         :param simulation_time: Time in second to simulate the robots for.
         :param sampling_frequency: Sampling frequency for the simulation. See `Batch` class from physics running.
         :param control_frequency: Control frequency for the simulation. See `Batch` class from physics running.
@@ -162,11 +162,11 @@ class Optimizer(EAOptimizer[Genotype, float]):
         self.mutation_prob = mutation_prob,
         self.substrate_radius = substrate_radius,
         self.run_simulation = run_simulation,
-        # create database structure if not exists
+        # create database_karine_params structure if not exists
         # TODO this works but there is probably a better way
         await (await session.connection()).run_sync(DbBase.metadata.create_all)
 
-        # save to database
+        # save to database_karine_params
         self._on_generation_checkpoint(session)
 
     async def ainit_from_database(  # type: ignore # see comment at ainit_new
@@ -182,18 +182,18 @@ class Optimizer(EAOptimizer[Genotype, float]):
             fitness_measure: str,
     ) -> bool:
         """
-        Try to initialize this class async from a database.
+        Try to initialize this class async from a database_karine_params.
 
         Called when creating an instance using `from_database`.
 
         :param database: Database to use for this optimizer.
-        :param session: Session to use when loading and saving data to the database during initialization.
+        :param session: Session to use when loading and saving data to the database_karine_params during initialization.
         :param db_id: Unique identifier in the completely program specifically made for this optimizer.
         :param rng: Random number generator.
-        :param innov_db_body: Innovation database for the body genotypes.
-        :param innov_db_brain: Innovation database for the brain genotypes.
-        :returns: True if this complete object could be deserialized from the database.
-        :raises IncompatibleError: In case the database is not compatible with this class.
+        :param innov_db_body: Innovation database_karine_params for the body genotypes.
+        :param innov_db_brain: Innovation database_karine_params for the brain genotypes.
+        :returns: True if this complete object could be deserialized from the database_karine_params.
+        :raises IncompatibleError: In case the database_karine_params is not compatible with this class.
         """
         if not await super().ainit_from_database(
                 database=database,
@@ -226,7 +226,7 @@ class Optimizer(EAOptimizer[Genotype, float]):
             .first()
         )
 
-        # if this happens something is wrong with the database
+        # if this happens something is wrong with the database_karine_params
         if opt_row is None:
             raise IncompatibleError
 
@@ -246,7 +246,7 @@ class Optimizer(EAOptimizer[Genotype, float]):
         return True
 
     def _init_runner(self) -> None:
-        self._runner = LocalRunner(headless=True,num_simulators=1)
+        self._runner = LocalRunner(headless=True, num_simulators=1)
 
     def _select_parents(
         self,
@@ -353,8 +353,8 @@ class Optimizer(EAOptimizer[Genotype, float]):
             measures_genotypes.append(m.measure_all_non_relative())
         #     render = Render()
         #
-        #     img_path = f'database/body_images/generation_{self.generation_index}/individual_{i}.png'
-        #     img_directory = f'database/body_images/generation_{self.generation_index}/'
+        #     img_path = f'database_karine_params/body_images/generation_{self.generation_index}/individual_{i}.png'
+        #     img_directory = f'database_karine_params/body_images/generation_{self.generation_index}/'
         #     # Check whether the specified path exists or not
         #     isExist = os.path.exists(img_directory)
         #     if not isExist:

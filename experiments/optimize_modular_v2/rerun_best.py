@@ -11,13 +11,13 @@ from revolve2.standard_resources import terrains
 
 async def main() -> None:
     """Run the script."""
-    db = open_async_database_sqlite("./database")
+    db = open_async_database_sqlite("./database_karine_2")
     async with AsyncSession(db) as session:
         best_individual = (
             await session.execute(
                 select(DbEAOptimizerIndividual, DbFloat)#.offset(100)
-                .filter(DbEAOptimizerIndividual.float_id == '3054')
-                .order_by(DbFloat.speed_y.desc())
+                .filter(DbEAOptimizerIndividual.float_id == '1200')
+                #.order_by(DbFloat.speed_y.desc())
             )
         ).first()
 

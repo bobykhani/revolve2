@@ -16,7 +16,7 @@ def mutate_v1(
 
     :param genotype: The genotype to mutate. This object is not altered.
     :param multineat_params: Multineat parameters. See Multineat library.
-    :param innov_db: Multineat innovation database. See Multineat library.
+    :param innov_db: Multineat innovation database_karine_params. See Multineat library.
     :param rng: Random number generator.
     :returns: A mutated copy of the provided genotype.
     """

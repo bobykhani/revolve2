@@ -45,9 +45,9 @@ class GenotypeSerializer(Serializer[Genotype]):
         cls, session: AsyncSession, objects: List[Genotype]
     ) -> List[int]:
         """
-        Serialize the provided objects to a database using the provided session.
+        Serialize the provided objects to a database_karine_params using the provided session.
 
-        :param session: Session used when serializing to the database. This session will not be committed by this function.
+        :param session: Session used when serializing to the database_karine_params. This session will not be committed by this function.
         :param objects: The objects to serialize.
         :returns: A list of ids to identify each serialized object.
         """
@@ -68,12 +68,12 @@ class GenotypeSerializer(Serializer[Genotype]):
         cls, session: AsyncSession, ids: List[int]
     ) -> List[Genotype]:
         """
-        Deserialize a list of objects from a database using the provided session.
+        Deserialize a list of objects from a database_karine_params using the provided session.
 
-        :param session: Session used for deserialization from the database. No changes are made to the database.
+        :param session: Session used for deserialization from the database_karine_params. No changes are made to the database_karine_params.
         :param ids: Ids identifying the objects to deserialize.
         :returns: The deserialized objects.
-        :raises IncompatibleError: In case the database is not compatible with this serializer.
+        :raises IncompatibleError: In case the database_karine_params is not compatible with this serializer.
         """
         rows = (
             (await session.execute(select(DbGenotype).filter(DbGenotype.id.in_(ids))))

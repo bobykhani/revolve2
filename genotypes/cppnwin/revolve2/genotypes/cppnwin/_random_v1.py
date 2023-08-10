@@ -18,7 +18,7 @@ def random_v1(
     A CPPNWIN network starts empty.
     A random network is created by mutating `num_initial_mutations` times.
 
-    :param innov_db: Multineat innovation database. See Multineat library.
+    :param innov_db: Multineat innovation database_karine_params. See Multineat library.
     :param rng: Random number generator.
     :param multineat_params: Multineat parameters. See Multineat library.
     :param output_activation_func: Activation function for the output layer. See Multineat library.

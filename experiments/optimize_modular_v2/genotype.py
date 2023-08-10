@@ -34,39 +34,63 @@ from sqlalchemy.future import select
 
 
 def _make_multineat_params() -> multineat.Parameters:
+    # multineat_params = multineat.Parameters()
+    #
+    # multineat_params.MutateRemLinkProb = 0.02
+    # multineat_params.RecurrentProb = 0.0
+    # multineat_params.OverallMutationRate = 0.15
+    # multineat_params.MutateAddLinkProb = 0.08
+    # multineat_params.MutateAddNeuronProb = 0.01
+    # multineat_params.MutateWeightsProb = 0.90
+    # multineat_params.MaxWeight = 8.0
+    # multineat_params.WeightMutationMaxPower = 0.2
+    # multineat_params.WeightReplacementMaxPower = 1.0
+    # multineat_params.MutateActivationAProb = 0.0
+    # multineat_params.ActivationAMutationMaxPower = 0.5
+    # multineat_params.MinActivationA = 0.05
+    # multineat_params.MaxActivationA = 6.0
+    #
+    # multineat_params.MutateNeuronActivationTypeProb = 0.03
+    #
+    # multineat_params.MutateOutputActivationFunction = False
+    #
+    # multineat_params.ActivationFunction_SignedSigmoid_Prob = 0.0
+    # multineat_params.ActivationFunction_UnsignedSigmoid_Prob = 0.0
+    # multineat_params.ActivationFunction_Tanh_Prob = 1.0
+    # multineat_params.ActivationFunction_TanhCubic_Prob = 0.0
+    # multineat_params.ActivationFunction_SignedStep_Prob = 1.0
+    # multineat_params.ActivationFunction_UnsignedStep_Prob = 0.0
+    # multineat_params.ActivationFunction_SignedGauss_Prob = 1.0
+    # multineat_params.ActivationFunction_UnsignedGauss_Prob = 0.0
+    # multineat_params.ActivationFunction_Abs_Prob = 0.0
+    # multineat_params.ActivationFunction_SignedSine_Prob = 1.0
+    # multineat_params.ActivationFunction_UnsignedSine_Prob = 0.0
+    # multineat_params.ActivationFunction_Linear_Prob = 1.0
+    #
+    # multineat_params.MutateNeuronTraitsProb = 0.0
+    # multineat_params.MutateLinkTraitsProb = 0.0
+    #
+    # multineat_params.AllowLoops = False
+    #
+    # return multineat_params
     multineat_params = multineat.Parameters()
 
-    multineat_params.MutateRemLinkProb = 0.02
+    multineat_params.OverallMutationRate = 1
+    multineat_params.MutateAddLinkProb = 0.5
+    multineat_params.MutateRemLinkProb = 0.5
+    multineat_params.MutateAddNeuronProb = 0.2
+    multineat_params.MutateRemSimpleNeuronProb = 0.2
     multineat_params.RecurrentProb = 0.0
-    multineat_params.OverallMutationRate = 0.15
-    multineat_params.MutateAddLinkProb = 0.08
-    multineat_params.MutateAddNeuronProb = 0.01
-    multineat_params.MutateWeightsProb = 0.90
-    multineat_params.MaxWeight = 8.0
-    multineat_params.WeightMutationMaxPower = 0.2
+    multineat_params.MutateWeightsProb = 0.8
+    multineat_params.WeightMutationMaxPower = 0.5
     multineat_params.WeightReplacementMaxPower = 1.0
-    multineat_params.MutateActivationAProb = 0.0
+    multineat_params.MutateActivationAProb = 0
     multineat_params.ActivationAMutationMaxPower = 0.5
     multineat_params.MinActivationA = 0.05
     multineat_params.MaxActivationA = 6.0
-
-    multineat_params.MutateNeuronActivationTypeProb = 0.03
-
+    multineat_params.MaxWeight = 8.0
+    multineat_params.MutateNeuronActivationTypeProb = 0
     multineat_params.MutateOutputActivationFunction = False
-
-    multineat_params.ActivationFunction_SignedSigmoid_Prob = 0.0
-    multineat_params.ActivationFunction_UnsignedSigmoid_Prob = 0.0
-    multineat_params.ActivationFunction_Tanh_Prob = 1.0
-    multineat_params.ActivationFunction_TanhCubic_Prob = 0.0
-    multineat_params.ActivationFunction_SignedStep_Prob = 1.0
-    multineat_params.ActivationFunction_UnsignedStep_Prob = 0.0
-    multineat_params.ActivationFunction_SignedGauss_Prob = 1.0
-    multineat_params.ActivationFunction_UnsignedGauss_Prob = 0.0
-    multineat_params.ActivationFunction_Abs_Prob = 0.0
-    multineat_params.ActivationFunction_SignedSine_Prob = 1.0
-    multineat_params.ActivationFunction_UnsignedSine_Prob = 0.0
-    multineat_params.ActivationFunction_Linear_Prob = 1.0
-
     multineat_params.MutateNeuronTraitsProb = 0.0
     multineat_params.MutateLinkTraitsProb = 0.0
 
@@ -114,9 +138,9 @@ class GenotypeSerializer(Serializer[Genotype]):
         cls, session: AsyncSession, objects: List[Genotype]
     ) -> List[int]:
         """
-        Serialize the provided objects to a database using the provided session.
+        Serialize the provided objects to a database_karine_params using the provided session.
 
-        :param session: Session used when serializing to the database. This session will not be committed by this function.
+        :param session: Session used when serializing to the database_karine_params. This session will not be committed by this function.
         :param objects: The objects to serialize.
         :returns: A list of ids to identify each serialized object.
         """
@@ -145,12 +169,12 @@ class GenotypeSerializer(Serializer[Genotype]):
         cls, session: AsyncSession, ids: List[int]
     ) -> List[Genotype]:
         """
-        Deserialize a list of objects from a database using the provided session.
+        Deserialize a list of objects from a database_karine_params using the provided session.
 
-        :param session: Session used for deserialization from the database. No changes are made to the database.
+        :param session: Session used for deserialization from the database_karine_params. No changes are made to the database_karine_params.
         :param ids: Ids identifying the objects to deserialize.
         :returns: The deserialized objects.
-        :raises IncompatibleError: In case the database is not compatible with this serializer.
+        :raises IncompatibleError: In case the database_karine_params is not compatible with this serializer.
         """
         rows = (
             (await session.execute(select(DbGenotype).filter(DbGenotype.id.in_(ids))))
@@ -189,8 +213,8 @@ def random(
     """
     Create a random genotype.
 
-    :param innov_db_body: Multineat innovation database for the body. See Multineat library.
-    :param innov_db_brain: Multineat innovation database for the brain. See Multineat library.
+    :param innov_db_body: Multineat innovation database_karine_params for the body. See Multineat library.
+    :param innov_db_brain: Multineat innovation database_karine_params for the brain. See Multineat library.
     :param rng: Random number generator.
     :param num_initial_mutations: The number of times to mutate to create a random network. See CPPNWIN genotype.
     :returns: The created genotype.
@@ -230,8 +254,8 @@ def mutate(
     The genotype will not be changed; a mutated copy will be returned.
 
     :param genotype: The genotype to mutate. This object is not altered.
-    :param innov_db_body: Multineat innovation database for the body. See Multineat library.
-    :param innov_db_brain: Multineat innovation database for the brain. See Multineat library.
+    :param innov_db_body: Multineat innovation database_karine_params for the body. See Multineat library.
+    :param innov_db_brain: Multineat innovation database_karine_params for the brain. See Multineat library.
     :param rng: Random number generator.
     :returns: A mutated copy of the provided genotype.
     """

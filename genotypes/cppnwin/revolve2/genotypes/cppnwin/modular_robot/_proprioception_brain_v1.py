@@ -33,20 +33,53 @@ class ProprioceptionCPPNNetwork(ActorController):
         return self
 
     def step(self, dt: float) -> None:
-        brain_net = multineat.NeuralNetwork()
-        self._genotype.BuildPhenotype(brain_net)
+        # Only build the network if it doesn't exist, otherwise reuse
+        if not hasattr(self, 'brain_net'):
+            self.brain_net = multineat.NeuralNetwork()
+            self._genotype.BuildPhenotype(self.brain_net)
 
         sin = math.sin(self._steps)
-        self._sensors = [sin] * len(self._sensors)
-        #closed_loop = self._sensors# + sin
-        closed_loop = [sensor + sin for sensor in self._sensors]
 
-        output = self._evaluate_network(
-            brain_net, closed_loop,
-        )
+        # Assuming you want to add sin to each sensor value
+        closed_loop = [(sensor + sin) for sensor in self._sensors]
 
-        self._dof_targets = list(np.clip(output, a_min=-self._dof_ranges, a_max=self._dof_ranges))
+        output = self._evaluate_network(self.brain_net, closed_loop)
+        output = list(np.clip(output, a_min=-self._dof_ranges, a_max=self._dof_ranges))
+
+        # Option 1: Smoothed Transition to New Target
+        alpha = 0.1
+        self._dof_targets = [(alpha * new_output + (1 - alpha) * old_output) for new_output, old_output in
+                             zip(output, self._dof_targets)]
+
+        # Option 2: Limit Rate of Change (can be combined with Option 1 if needed)
+        max_rate_of_change = 0.05
+        change = [new - old for new, old in zip(output, self._dof_targets)]
+        change = [np.clip(delta, -max_rate_of_change, max_rate_of_change) for delta in change]
+        self._dof_targets = [old + delta for old, delta in zip(self._dof_targets, change)]
+
         self._steps += 1
+
+    # def step(self, dt: float) -> None:
+    #     brain_net = multineat.NeuralNetwork()
+    #     self._genotype.BuildPhenotype(brain_net)
+    #
+    #     sin = math.sin(self._steps)
+    #     self._sensors = [sin] * len(self._sensors)
+    #     #closed_loop = self._sensors# + sin
+    #     closed_loop = [(sensor + sin) for sensor in self._sensors]
+    #
+    #     output = self._evaluate_network(
+    #         brain_net, closed_loop,
+    #     )
+    #
+    #     output =  list(np.clip(output, a_min=-self._dof_ranges, a_max=self._dof_ranges))
+    #
+    #     #sum current dof targets with previous dof targets
+    #
+    #     self._dof_targets = output#[self._dof_targets[i] + output[i] for i in range(len(output))]
+    #
+    #     #################################################
+    #     self._steps += 1
 
     def get_dof_targets(self) -> List[float]:
         return self._dof_targets
