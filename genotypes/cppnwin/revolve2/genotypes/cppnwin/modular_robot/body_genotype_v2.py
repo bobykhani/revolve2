@@ -213,10 +213,10 @@ class Develop:
     def new_module(self, module_type, orientation, parent_module):
 
         # calculates _absolute_rotation
-        absolute_rotation = 0
+        absolute_rotation = parent_module._rotation + orientation * (math.pi / 2.0)
         if (module_type == ActiveHinge or module_type == PassiveBone) and orientation == 1:
             if (type(parent_module) == ActiveHinge or type(parent_module) == PassiveBone) and parent_module._rotation == 1:
-                _rotation = 0
+                _rotation = 1
             else:
                 _rotation = 1
         else:
@@ -237,6 +237,47 @@ class Develop:
         module._rotation = absolute_rotation
         module.rgb = self.get_color(module_type, orientation)
         return module
+
+    # def new_module(self, module_type, orientation, parent_module):
+    #     # Constants
+    #     DEFAULT_ROTATION = 0
+    #     SIZE = 0.1
+    #     ROTATION_ANGLE = math.pi / 2.0
+    #
+    #     # Initialize _rotation to a default value
+    #     _rotation = DEFAULT_ROTATION
+    #
+    #     # Check if parent_module is of type ActiveHinge or PassiveBone
+    #     is_parent_active_or_passive = isinstance(parent_module, (ActiveHinge, PassiveBone))
+    #
+    #     # Set _rotation based on module_type, orientation, and parent_module's type and rotation
+    #     if (module_type == ActiveHinge or module_type == PassiveBone) and orientation == 1:
+    #         if is_parent_active_or_passive and parent_module._rotation == 1:
+    #             _rotation = 0
+    #         else:
+    #             _rotation = 1
+    #     elif is_parent_active_or_passive and parent_module._rotation == 1:
+    #         _rotation = 1
+    #
+    #     # Adjust orientation for Brick type to prevent 3D shapes
+    #     if module_type == Brick and is_parent_active_or_passive and parent_module._rotation == 1:
+    #         new_orientation = 1
+    #     else:
+    #         new_orientation = orientation
+    #
+    #     # Create the new module based on its type
+    #     if module_type == PassiveBone:
+    #         module = module_type(new_orientation * ROTATION_ANGLE, size=SIZE)
+    #     else:
+    #         module = module_type(new_orientation * ROTATION_ANGLE)
+    #
+    #     # Set additional attributes for the module
+    #     self.quantity_modules += 1
+    #     module._id = str(self.quantity_modules)
+    #     module._rotation = _rotation
+    #     module.rgb = self.get_color(module_type, new_orientation)
+    #
+    #     return module
 
     def query_body_part(self, x_dest, y_dest):
 
@@ -288,15 +329,15 @@ class Develop:
 
 
         types = [Brick, ActiveHinge, PassiveBone]
-        module_type = types[type_probs.index(max(type_probs))]
+        module_type = types[type_probs.index(min(type_probs))]
 
         # types = [Brick, ActiveHinge, PassiveBone]
         # module_type = types[type_probs.index(max(type_probs))]
 
         # get rotation from output probabilities
         if module_type is ActiveHinge:
-            rotation_probs = [outputs[3]]
-            rotation = rotation_probs.index(max(rotation_probs))
+            rotation_probs = [outputs[3], outputs[4]]
+            rotation = rotation_probs.index(min(rotation_probs))
         else:
             rotation = 0
 
