@@ -278,8 +278,20 @@ class Develop:
 
         # get module type from output probabilities
         type_probs = [outputs[0], outputs[1],outputs[2]]
+
+        brick_bias = 0.2  # This value can be adjusted based on desired behavior
+        ActiveHinge_bias = 0.1  # This value can be adjusted based on desired behavior
+        PassiveBone_bias = 0.1  # This value can be adjusted based on desired behavior
+        type_probs[0] += brick_bias
+        type_probs[1] += ActiveHinge_bias
+        type_probs[2] += PassiveBone_bias
+
+
         types = [Brick, ActiveHinge, PassiveBone]
         module_type = types[type_probs.index(max(type_probs))]
+
+        # types = [Brick, ActiveHinge, PassiveBone]
+        # module_type = types[type_probs.index(max(type_probs))]
 
         # get rotation from output probabilities
         if module_type is ActiveHinge:

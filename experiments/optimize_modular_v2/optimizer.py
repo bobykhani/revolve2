@@ -246,7 +246,7 @@ class Optimizer(EAOptimizer[Genotype, float]):
         return True
 
     def _init_runner(self) -> None:
-        self._runner = LocalRunner(headless=True, num_simulators=1)
+        self._runner = LocalRunner(headless=False, num_simulators=1)
 
     def _select_parents(
         self,

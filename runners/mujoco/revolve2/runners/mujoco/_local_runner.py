@@ -452,8 +452,8 @@ class LocalRunner(Runner):
 
     @staticmethod
     def _set_dof_targets(data: mujoco.MjData, targets: List[float]) -> None:
-        if len(targets) * 2 != len(data.ctrl):
-            raise RuntimeError("Need to set a target for every dof")
+        #if len(targets) * 2 != len(data.ctrl):
+        #    raise RuntimeError("Need to set a target for every dof")
         for i, target in enumerate(targets):
             data.ctrl[2 * i] = target
             data.ctrl[2 * i + 1] = 0

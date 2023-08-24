@@ -8,13 +8,14 @@ import multineat
 import sqlalchemy
 
 from experiments.optimize_modular_v2.body_spider import make_body_spider
+from experiments.optimize_modular_v2.robots import gecko,ant,salamander,spider
 from revolve2.core.database import IncompatibleError, Serializer
 from revolve2.core.modular_robot import ModularRobot
 from revolve2.genotypes.cppnwin import Genotype as CppnwinGenotype
 from revolve2.genotypes.cppnwin import GenotypeSerializer as CppnwinGenotypeSerializer
 from revolve2.genotypes.cppnwin import crossover_v1, mutate_v1
 from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v2 import (
-    Develop as body_develop,
+    Develop as body_develop
 )
 from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v2 import (
     random_v1 as body_random,
@@ -237,6 +238,7 @@ def random(
         _MULTINEAT_PARAMS,
         multineat.ActivationFunction.SIGNED_SINE,
         num_initial_mutations,
+        body,
     )
 
     return Genotype(body, brain)
@@ -309,10 +311,11 @@ def develop(genotype: Genotype) -> ModularRobot:
     :param genotype: The genotype to create the robot from.
     :returns: The created robot.
     """
-    bb = 'spider'
+    bb = 'sssspider'
     if bb == 'spider':
         #body = make_body_spider()
         body = {0: make_body_spider()}
+        #body = {0: spider()}
     else:
         b = body_develop(genotype.body)
         body = b.develop()

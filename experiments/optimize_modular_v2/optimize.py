@@ -1,6 +1,7 @@
 """Setup and running of the optimize modular program."""
 
 import logging
+import random
 from random import Random
 
 import multineat
@@ -24,8 +25,8 @@ async def main() -> None:
     SAMPLING_FREQUENCY = 8
     CONTROL_FREQUENCY = 5
 
-    POPULATION_SIZE = 100
-    OFFSPRING_SIZE = 100
+    POPULATION_SIZE = 50
+    OFFSPRING_SIZE = 50
     NUM_GENERATIONS = 100
 
     FITNESS_MEASURE = 'speed_y'
@@ -47,7 +48,7 @@ async def main() -> None:
 
     # random number generator
     rng = Random()
-    rng.seed(600)
+    rng.seed(random.random())
 
     # database_karine_params
     database = open_async_database_sqlite("./database", create=True)

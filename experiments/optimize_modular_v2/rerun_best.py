@@ -11,13 +11,13 @@ from revolve2.standard_resources import terrains
 
 async def main() -> None:
     """Run the script."""
-    db = open_async_database_sqlite("./database_karine_2")
+    db = open_async_database_sqlite("./database")
     async with AsyncSession(db) as session:
         best_individual = (
             await session.execute(
-                select(DbEAOptimizerIndividual, DbFloat)#.offset(100)
-                .filter(DbEAOptimizerIndividual.float_id == '1200')
-                #.order_by(DbFloat.speed_y.desc())
+                select(DbEAOptimizerIndividual, DbFloat)
+                .filter(DbEAOptimizerIndividual.float_id == DbFloat.id)
+                .order_by(DbFloat.speed_y.desc())
             )
         ).first()
 
@@ -33,7 +33,7 @@ async def main() -> None:
 
     rerunner = ModularRobotRerunner()
     #await rerunner.rerun(develop(genotype), 60, terrain= terrains.crater([20,20],0.3,1))
-    await rerunner.rerun(develop(genotype), 60, terrain= terrains.flat())
+    await rerunner.rerun(develop(genotype), 5, terrain = terrains.flat())
 
 
 if __name__ == "__main__":
