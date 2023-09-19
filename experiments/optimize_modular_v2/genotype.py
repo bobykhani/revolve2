@@ -7,8 +7,8 @@ from typing import List
 import multineat
 import sqlalchemy
 
-from experiments.optimize_modular_v2.body_spider import make_body_spider
-from experiments.optimize_modular_v2.robots import gecko,ant,salamander,spider
+#from experiments.optimize_modular_v2.body_spider import make_body_spider
+from experiments.optimize_modular_v2.robots import *
 from revolve2.core.database import IncompatibleError, Serializer
 from revolve2.core.modular_robot import ModularRobot
 from revolve2.genotypes.cppnwin import Genotype as CppnwinGenotype
@@ -20,6 +20,8 @@ from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v2 import (
 from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v2 import (
     random_v1 as body_random,
 )
+from mask_gene.mask_genotype import MaskGenome
+
 # from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_cpg_v1 import (
 #     develop_v1 as brain_develop,
 # )
@@ -109,6 +111,7 @@ class Genotype:
 
     body: CppnwinGenotype
     brain: CppnwinGenotype
+    mask: MaskGenome
 
 
 class GenotypeSerializer(Serializer[Genotype]):
@@ -157,6 +160,13 @@ class GenotypeSerializer(Serializer[Genotype]):
             for body_id, brain_id in zip(body_ids, brain_ids)
         ]
 
+        # for o in objects:
+        #     for body_id,brain_id in zip(body_ids,brain_ids):
+        #         mask_str = str(o.mask.genome)
+        #         # Save the mask string to a text file in a new line
+        #         with open('mask_strings.txt', 'a') as file:
+        #             file.write(str(body_id) + '\t' + str(brain_id) + '\t' + mask_str + '\n')
+
         session.add_all(dbgenotypes)
         await session.flush()
         ids = [
@@ -198,7 +208,7 @@ class GenotypeSerializer(Serializer[Genotype]):
         )
 
         genotypes = [
-            Genotype(body, brain)
+            Genotype(body, brain,MaskGenome(3))
             for body, brain in zip(body_genotypes, brain_genotypes)
         ]
 
@@ -240,8 +250,12 @@ def random(
         num_initial_mutations,
         body,
     )
-
-    return Genotype(body, brain)
+    evolvable_mask = False
+    mask = MaskGenome(10)
+    # mask.genome = []
+    if not evolvable_mask:
+        mask.genome = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    return Genotype(body, brain, mask)
 
 
 def mutate(
@@ -261,11 +275,18 @@ def mutate(
     :param rng: Random number generator.
     :returns: A mutated copy of the provided genotype.
     """
+    evolvable_mask = False
+
     multineat_rng = _multineat_rng_from_random(rng)
+
+    if evolvable_mask:
+        if (genotype.mask != None):
+            genotype.mask.mutate(0.2)
 
     return Genotype(
         mutate_v1(genotype.body, _MULTINEAT_PARAMS, innov_db_body, multineat_rng),
         mutate_v1(genotype.brain, _MULTINEAT_PARAMS, innov_db_brain, multineat_rng),
+        genotype.mask
     )
 
 
@@ -284,25 +305,48 @@ def crossover(
     """
     multineat_rng = _multineat_rng_from_random(rng)
 
-    return Genotype(
-        crossover_v1(
-            parent1.body,
-            parent2.body,
-            _MULTINEAT_PARAMS,
-            multineat_rng,
-            False,
-            False,
-        ),
-        crossover_v1(
-            parent1.brain,
-            parent2.brain,
-            _MULTINEAT_PARAMS,
-            multineat_rng,
-            False,
-            False,
-        ),
-    )
+    evolvable_mask = False
 
+    if evolvable_mask:
+        return Genotype(
+            crossover_v1(
+                parent1.body,
+                parent2.body,
+                _MULTINEAT_PARAMS,
+                multineat_rng,
+                False,
+                False,
+            ),
+            crossover_v1(
+                parent1.brain,
+                parent2.brain,
+                _MULTINEAT_PARAMS,
+                multineat_rng,
+                False,
+                False,
+            ),
+            parent1.mask.crossover(parent2.mask)
+        )
+    else:
+        return Genotype(
+            crossover_v1(
+                parent1.body,
+                parent2.body,
+                _MULTINEAT_PARAMS,
+                multineat_rng,
+                False,
+                False,
+            ),
+            crossover_v1(
+                parent1.brain,
+                parent2.brain,
+                _MULTINEAT_PARAMS,
+                multineat_rng,
+                False,
+                False,
+            ),
+            parent1.mask
+        )
 
 def develop(genotype: Genotype) -> ModularRobot:
     """
@@ -311,15 +355,37 @@ def develop(genotype: Genotype) -> ModularRobot:
     :param genotype: The genotype to create the robot from.
     :returns: The created robot.
     """
-    bb = 'sssspider'
-    if bb == 'spider':
-        #body = make_body_spider()
-        body = {0: make_body_spider()}
+    bb = 'not evolvable'
+    if bb != 'evolvable':
+        body = insect()
+        # body = babya()
+        # body = babyb()
+        # body = blokky()
+        # body = garrix()
+        # body = gecko()
+        # body = insect()
+        # body = linkin()
+        # body = longleg()
+        # body = penguin()
+        # body = pentapod()
+        # body = queen()
+        # body = salamander()
+        # body = squarish()
+        # body = snake()
+        # body = spider()
+        # body = stingray()
+        # body = tinlicker()
+        # body = turtle()
+        # body = ww()
+        # body = zappa()
+        # body = ant()
+        # body = park()
+        body = {0: body}
         #body = {0: spider()}
     else:
         b = body_develop(genotype.body)
         body = b.develop()
-    brain = brain_develop(genotype.brain, body)
+    brain = brain_develop(genotype.brain, body, genotype.mask)
     return ModularRobot(body, brain)
 
 

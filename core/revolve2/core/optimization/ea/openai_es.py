@@ -1,4 +1,4 @@
-"""OpenAI ES optimizer and corresponding database model."""
+"""OpenAI ES optimizer and corresponding database_karine_params model."""
 
 import logging
 import pickle
@@ -82,7 +82,7 @@ class OpenaiESOptimizer(ABC, Process):
         Called when creating an instance using `new`.
 
         :param database: Database to use for this optimizer.
-        :param session: Session to use when saving data to the database during initialization.
+        :param session: Session to use when saving data to the database_karine_params during initialization.
         :param db_id: Unique identifier in the completely program specifically made for this optimizer.
         :param rng: Random number generator used in the complete optimization process.
         :param population_size: Size of the population. OpenAI ES parameter.
@@ -124,16 +124,16 @@ class OpenaiESOptimizer(ABC, Process):
         rng: Random,
     ) -> bool:
         """
-        Try to initialize this class async from a database.
+        Try to initialize this class async from a database_karine_params.
 
         Called when creating an instance using `from_database`.
 
         :param database: Database to use for this optimizer.
-        :param session: Session to use when loading and saving data to the database during initialization.
+        :param session: Session to use when loading and saving data to the database_karine_params during initialization.
         :param db_id: Unique identifier in the completely program specifically made for this optimizer.
-        :param rng: Random number generator used in the complete optimization process. Its state will be overwritten with the serialized state from the database.
-        :returns: True if the complete object could be deserialized from the database.
-        :raises IncompatibleError: In case the database is not compatible with this class.
+        :param rng: Random number generator used in the complete optimization process. Its state will be overwritten with the serialized state from the database_karine_params.
+        :returns: True if the complete object could be deserialized from the database_karine_params.
+        :raises IncompatibleError: In case the database_karine_params is not compatible with this class.
         """
         self.__database = database
         self.__db_id = db_id
@@ -171,7 +171,7 @@ class OpenaiESOptimizer(ABC, Process):
             .first()
         )
 
-        self.__rng = rng  # set state from database below
+        self.__rng = rng  # set state from database_karine_params below
 
         if db_state is None:
             self.__gen_num = 0

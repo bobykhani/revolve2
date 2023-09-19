@@ -72,7 +72,7 @@ class Optimizer(OpenaiESOptimizer):
         Called when creating an instance using `new`.
 
         :param database: Database to use for this optimizer.
-        :param session: Session to use when saving data to the database during initialization.
+        :param session: Session to use when saving data to the database_karine_params during initialization.
         :param db_id: Unique identifier in the completely program specifically made for this optimizer.
         :param rng: Random number generator.
         :param population_size: Population size for the OpenAI ES algorithm.
@@ -125,12 +125,12 @@ class Optimizer(OpenaiESOptimizer):
         num_generations: int,
     ) -> bool:
         """
-        Try to initialize this class async from a database.
+        Try to initialize this class async from a database_karine_params.
 
         Called when creating an instance using `from_database`.
 
         :param database: Database to use for this optimizer.
-        :param session: Session to use when loading and saving data to the database during initialization.
+        :param session: Session to use when loading and saving data to the database_karine_params during initialization.
         :param db_id: Unique identifier in the completely program specifically made for this optimizer.
         :param rng: Random number generator.
         :param robot_body: The body to optimize the brain for.
@@ -138,7 +138,7 @@ class Optimizer(OpenaiESOptimizer):
         :param sampling_frequency: Sampling frequency for the simulation. See `Batch` class from physics running.
         :param control_frequency: Control frequency for the simulation. See `Batch` class from physics running.
         :param num_generations: Number of generation to run the optimizer for.
-        :returns: True if this complete object could be deserialized from the database.
+        :returns: True if this complete object could be deserialized from the database_karine_params.
         """
         if not await super().ainit_from_database(
             database=database,

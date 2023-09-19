@@ -1,7 +1,7 @@
 """
 Plot average, min, and max fitness over generations, using the results of the evolutionary optimizer.
 
-Assumes fitness is a float and database is files.
+Assumes fitness is a float and database_karine_params is files.
 See program help for what inputs to provide.
 """
 
@@ -19,10 +19,10 @@ def plot(database: str, db_id: DbId) -> None:
     """
     Do the actual plotting.
 
-    :param database: The database with the results.
+    :param database: The database_karine_params with the results.
     :param db_id: The id of the ea optimizer to plot.
     """
-    # open the database
+    # open the database_karine_params
     db = open_database_sqlite(database)
     # read the optimizer data into a pandas dataframe
     df = pandas.read_sql(
@@ -46,9 +46,9 @@ def main() -> None:
     """Run the program."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "database",
+        "database_karine_params",
         type=str,
-        help="The database to plot.",
+        help="The database_karine_params to plot.",
     )
     parser.add_argument(
         "db_id",

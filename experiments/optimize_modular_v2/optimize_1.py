@@ -51,7 +51,7 @@ async def main() -> None:
     rng.seed(random.random())
 
     # database_karine_params
-    database = open_async_database_sqlite("./database_1", create=True)
+    database = open_async_database_sqlite("./database", create=True)
 
     # process_id_gen = ProcessIdGen()
 

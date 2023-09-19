@@ -44,5 +44,5 @@ def random_v1(
 #def develop_v1(genotype: Genotype, body: Body, env_condition: int,
 #                n_env_conditions: int, plastic_brain: int) -> BrainANN:
 #     return BrainANN(genotype.genotype)
-def develop_v1(genotype: Genotype, body: Body) -> BrainANN:
-    return BrainANN(genotype.genotype)
+def develop_v1(genotype: Genotype, body: Body, mask) -> BrainANN:
+    return BrainANN(genotype.genotype, mask)

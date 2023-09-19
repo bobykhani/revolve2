@@ -216,7 +216,7 @@ class Develop:
         absolute_rotation = parent_module._rotation + orientation * (math.pi / 2.0)
         if (module_type == ActiveHinge or module_type == PassiveBone) and orientation == 1:
             if (type(parent_module) == ActiveHinge or type(parent_module) == PassiveBone) and parent_module._rotation == 1:
-                _rotation = 1
+                _rotation = 0
             else:
                 _rotation = 1
         else:
@@ -320,9 +320,9 @@ class Develop:
         # get module type from output probabilities
         type_probs = [outputs[0], outputs[1],outputs[2]]
 
-        brick_bias = 0.2  # This value can be adjusted based on desired behavior
-        ActiveHinge_bias = 0.1  # This value can be adjusted based on desired behavior
-        PassiveBone_bias = 0.1  # This value can be adjusted based on desired behavior
+        brick_bias = 0#0.2  # This value can be adjusted based on desired behavior
+        ActiveHinge_bias = 0#0.1  # This value can be adjusted based on desired behavior
+        PassiveBone_bias = 0#0.1  # This value can be adjusted based on desired behavior
         type_probs[0] += brick_bias
         type_probs[1] += ActiveHinge_bias
         type_probs[2] += PassiveBone_bias

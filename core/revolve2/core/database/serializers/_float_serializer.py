@@ -37,9 +37,9 @@ class FloatSerializer(Serializer[float]):
             cls, session: AsyncSession, objects: List[float]
     ) -> List[int]:
         """
-        Serialize the provided objects to a database using the provided session.
+        Serialize the provided objects to a database_karine_params using the provided session.
 
-        :param session: Session used when serializing to the database. This session will not be committed by this function.
+        :param session: Session used when serializing to the database_karine_params. This session will not be committed by this function.
         :param objects: The objects to serialize.
         :returns: A list of ids to identify each serialized object.
         """
@@ -70,7 +70,9 @@ class FloatSerializer(Serializer[float]):
                          displacement=f['displacement'],
                          relative_speed_y=f['relative_speed_y'],
                          hinge_ratio=f['hinge_ratio'],
-#                         body_changes=f['body_changes'],
+                         brain_mask = f['brain_mask'],
+
+        #                         body_changes=f['body_changes'],
                          )
                  for f in objects]
         session.add_all(items)
@@ -86,9 +88,9 @@ class FloatSerializer(Serializer[float]):
     @classmethod
     async def from_database(cls, session: AsyncSession, ids: List[int]) -> List[float]:
         """
-        Deserialize a list of objects from a database using the provided session.
+        Deserialize a list of objects from a database_karine_params using the provided session.
 
-        :param session: Session used for deserialization from the database. No changes are made to the database.
+        :param session: Session used for deserialization from the database_karine_params. No changes are made to the database_karine_params.
         :param ids: Ids identifying the objects to deserialize.
         :returns: The deserialized objects.
         """
@@ -129,6 +131,7 @@ class FloatSerializer(Serializer[float]):
             measures['relative_speed_y'] = items[i].relative_speed_y
             measures['displacement'] = items[i].displacement
             measures['hinge_ratio'] = items[i].hinge_ratio
+            measures['brain_mask'] = items[i].brain_mask
             # measures['body_changes'] = items[i].body_changes
 
             measures_genotypes.append(measures)
@@ -174,4 +177,6 @@ class DbFloat(DbBase):
     proportion = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
     symmetry = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
     hinge_ratio = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
+    brain_mask = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+
     # body_changes = sqlalchemy.Column(sqlalchemy.Float, nullable=True)

@@ -114,9 +114,9 @@ class GenotypeSerializer(Serializer[Genotype]):
         cls, session: AsyncSession, objects: List[Genotype]
     ) -> List[int]:
         """
-        Serialize the provided objects to a database using the provided session.
+        Serialize the provided objects to a database_karine_params using the provided session.
 
-        :param session: Session used when serializing to the database. This session will not be committed by this function.
+        :param session: Session used when serializing to the database_karine_params. This session will not be committed by this function.
         :param objects: The objects to serialize.
         :returns: A list of ids to identify each serialized object.
         """
@@ -145,12 +145,12 @@ class GenotypeSerializer(Serializer[Genotype]):
         cls, session: AsyncSession, ids: List[int]
     ) -> List[Genotype]:
         """
-        Deserialize a list of objects from a database using the provided session.
+        Deserialize a list of objects from a database_karine_params using the provided session.
 
-        :param session: Session used for deserialization from the database. No changes are made to the database.
+        :param session: Session used for deserialization from the database_karine_params. No changes are made to the database_karine_params.
         :param ids: Ids identifying the objects to deserialize.
         :returns: The deserialized objects.
-        :raises IncompatibleError: In case the database is not compatible with this serializer.
+        :raises IncompatibleError: In case the database_karine_params is not compatible with this serializer.
         """
         rows = (
             (await session.execute(select(DbGenotype).filter(DbGenotype.id.in_(ids))))
@@ -189,8 +189,8 @@ def random(
     """
     Create a random genotype.
 
-    :param innov_db_body: Multineat innovation database for the body. See Multineat library.
-    :param innov_db_brain: Multineat innovation database for the brain. See Multineat library.
+    :param innov_db_body: Multineat innovation database_karine_params for the body. See Multineat library.
+    :param innov_db_brain: Multineat innovation database_karine_params for the brain. See Multineat library.
     :param rng: Random number generator.
     :param num_initial_mutations: The number of times to mutate to create a random network. See CPPNWIN genotype.
     :returns: The created genotype.
@@ -228,8 +228,8 @@ def mutate(
     The genotype will not be changed; a mutated copy will be returned.
 
     :param genotype: The genotype to mutate. This object is not altered.
-    :param innov_db_body: Multineat innovation database for the body. See Multineat library.
-    :param innov_db_brain: Multineat innovation database for the brain. See Multineat library.
+    :param innov_db_body: Multineat innovation database_karine_params for the body. See Multineat library.
+    :param innov_db_brain: Multineat innovation database_karine_params for the brain. See Multineat library.
     :param rng: Random number generator.
     :returns: A mutated copy of the provided genotype.
     """

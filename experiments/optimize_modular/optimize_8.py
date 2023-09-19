@@ -47,12 +47,12 @@ async def main() -> None:
     rng = Random()
     rng.seed(500)
 
-    # database
-    database = open_async_database_sqlite("./database", create=True)
+    # database_karine_params
+    database = open_async_database_sqlite("./database_karine_params", create=True)
 
     # process_id_gen = ProcessIdGen()
 
-    # unique database identifier for optimizer
+    # unique database_karine_params identifier for optimizer
     db_id = DbId.root("test7")
 
     # multineat innovation databases

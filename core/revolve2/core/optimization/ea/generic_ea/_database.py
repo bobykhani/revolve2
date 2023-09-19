@@ -1,4 +1,4 @@
-"""SQLAlchemy database model for EA."""
+"""SQLAlchemy database_karine_params model for EA."""
 
 from sqlalchemy import Column, Integer, String, Float, Boolean
 from sqlalchemy.ext.declarative import declarative_base

@@ -7,7 +7,7 @@ from typing import Type
 @dataclass
 class DbId:
     """
-    Identifier in a database.
+    Identifier in a database_karine_params.
 
     Can can create children identifiers, forming a tree structure.
     """

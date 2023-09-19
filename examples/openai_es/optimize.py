@@ -29,10 +29,10 @@ async def main() -> None:
     rng = Random()
     rng.seed(0)
 
-    # database
-    database = open_async_database_sqlite("./database", create=True)
+    # database_karine_params
+    database = open_async_database_sqlite("./database_karine_params", create=True)
 
-    # unique database identifier for optimizer
+    # unique database_karine_params identifier for optimizer
     db_id = DbId.root("openaies")
 
     body = gecko()

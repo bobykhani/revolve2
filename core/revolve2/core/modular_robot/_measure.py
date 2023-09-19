@@ -35,7 +35,7 @@ class Measure:
         self._measures['birth'] = self._generation
         self._displacement()
         self._head_balance()
-
+        self._brain_mask()
         self._calculate_counts()
         self._modules_count()
         self._props()
@@ -64,6 +64,9 @@ class Measure:
 
         self._measures['hinge_prop'] = self._measures['hinge_count'] / self._measures['modules_count']
         self._measures['brick_prop'] = self._measures['brick_count'] / self._measures['modules_count']
+
+    def _brain_mask(self):
+        self._measures['brain_mask'] = str(self._phenotype_brain._mask.genome)
 
     # behavioral measures
     # TODO simulation can continue slightly passed the defined sim time.

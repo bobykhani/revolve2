@@ -52,7 +52,7 @@ class Optimizer(EAOptimizer[Genotype, float]):
         Called when creating an instance using `new`.
 
         :param database: Database to use for this optimizer.
-        :param session: Session to use when saving data to the database during initialization.
+        :param session: Session to use when saving data to the database_karine_params during initialization.
         :param db_id: Unique identifier in the completely program specifically made for this optimizer.
         :param offspring_size: Number of offspring made by the population each generation.
         :param initial_population: List of genotypes forming generation 0.
@@ -79,11 +79,11 @@ class Optimizer(EAOptimizer[Genotype, float]):
         self._max_weight = max_weight
         self._num_generations = num_generations
 
-        # create database structure if not exists
+        # create database_karine_params structure if not exists
         # TODO this works but there is probably a better way
         await (await session.connection()).run_sync(DbBase.metadata.create_all)
 
-        # save to database
+        # save to database_karine_params
         self._on_generation_checkpoint(session)
 
     async def ainit_from_database(  # type: ignore # see comment at ainit_new
@@ -97,19 +97,19 @@ class Optimizer(EAOptimizer[Genotype, float]):
         num_generations: int,
     ) -> bool:
         """
-        Try to initialize this class async from a database.
+        Try to initialize this class async from a database_karine_params.
 
         Called when creating an instance using `from_database`.
 
         :param database: Database to use for this optimizer.
-        :param session: Session to use when loading and saving data to the database during initialization.
+        :param session: Session to use when loading and saving data to the database_karine_params during initialization.
         :param db_id: Unique identifier in the completely program specifically made for this optimizer.
         :param rng: Random number generator.
         :param items: The items that could be in the knapsack.
         :param max_weight: Maximum weight of the knapsack.
         :param num_generations: Number of generation to run the optimizer for.
-        :returns: True if this complete object could be deserialized from the database.
-        :raises IncompatibleError: In case the database is not compatible with this class.
+        :returns: True if this complete object could be deserialized from the database_karine_params.
+        :raises IncompatibleError: In case the database_karine_params is not compatible with this class.
         """
         if not await super().ainit_from_database(
             database=database,
@@ -139,7 +139,7 @@ class Optimizer(EAOptimizer[Genotype, float]):
             .first()
         )
 
-        # if this happens something is wrong with the database
+        # if this happens something is wrong with the database_karine_params
         if opt_row is None:
             raise IncompatibleError
 

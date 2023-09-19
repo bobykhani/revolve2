@@ -35,10 +35,10 @@ async def main() -> None:
     # create 100 random items
     items = [Item(rng.randrange(0, 100), rng.randrange(0, 100)) for _ in range(100)]
 
-    # database
-    database = open_async_database_sqlite("./database", create=True)
+    # database_karine_params
+    database = open_async_database_sqlite("./database_karine_params", create=True)
 
-    # unique database identifier for optimizer
+    # unique database_karine_params identifier for optimizer
     db_id = DbId.root("simpleopt")
 
     initial_population = [
