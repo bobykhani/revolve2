@@ -161,7 +161,7 @@ class Optimizer(EAOptimizer[Genotype, float]):
         self.crossover_prob = crossover_prob,
         self.mutation_prob = mutation_prob,
         self.substrate_radius = substrate_radius,
-        self.run_simulation = run_simulation,
+        self.run_simulation = False,
         # create database_karine_params structure if not exists
         # TODO this works but there is probably a better way
         await (await session.connection()).run_sync(DbBase.metadata.create_all)
@@ -246,7 +246,7 @@ class Optimizer(EAOptimizer[Genotype, float]):
         return True
 
     def _init_runner(self) -> None:
-        self._runner = LocalRunner(headless=True, num_simulators=4)
+        self._runner = LocalRunner(headless=True, num_simulators=8)
 
     def _select_parents(
         self,

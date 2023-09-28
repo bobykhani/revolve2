@@ -71,6 +71,7 @@ class FloatSerializer(Serializer[float]):
                          relative_speed_y=f['relative_speed_y'],
                          hinge_ratio=f['hinge_ratio'],
                          brain_mask = f['brain_mask'],
+                         sum_mask=f['sum_mask'],
 
         #                         body_changes=f['body_changes'],
                          )
@@ -132,6 +133,8 @@ class FloatSerializer(Serializer[float]):
             measures['displacement'] = items[i].displacement
             measures['hinge_ratio'] = items[i].hinge_ratio
             measures['brain_mask'] = items[i].brain_mask
+            measures['sum_mask'] = items[i].sum_mask
+
             # measures['body_changes'] = items[i].body_changes
 
             measures_genotypes.append(measures)
@@ -178,5 +181,7 @@ class DbFloat(DbBase):
     symmetry = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
     hinge_ratio = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
     brain_mask = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    sum_mask = sqlalchemy.Column(sqlalchemy.Float, nullable=True)
+
 
     # body_changes = sqlalchemy.Column(sqlalchemy.Float, nullable=True)

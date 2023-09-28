@@ -41,7 +41,7 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
     See the `Process` parent class on how to make an instance of your implementation.
     You can run the optimization process using the `run` function.
 
-    Results will be saved every generation in the provided database.
+    Results will be saved every generation in the provided database_karine_params.
     """
 
     @abstractmethod
@@ -127,13 +127,13 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
     @abstractmethod
     def _on_generation_checkpoint(self, session: AsyncSession) -> None:
         """
-        Save the results of this generation to the database.
+        Save the results of this generation to the database_karine_params.
 
-        This function is called after a generation is finished and results and state are saved to the database.
+        This function is called after a generation is finished and results and state are saved to the database_karine_params.
         Use it to store state and results of the optimizer.
         The session must not be committed, but it may be flushed.
 
-        :param session: The session to use for writing to the database. Must not be committed, but can be flushed.
+        :param session: The session to use for writing to the database_karine_params. Must not be committed, but can be flushed.
         """
 
     __database: AsyncEngine
@@ -187,7 +187,7 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
         Called when creating an instance using `new`.
 
         :param database: Database to use for this optimizer.
-        :param session: Session to use when saving data to the database during initialization.
+        :param session: Session to use when saving data to the database_karine_params during initialization.
         :param db_id: Unique identifier in the completely program specifically made for this optimizer.
         :param genotype_type: Type of the genotype generic parameter.
         :param genotype_serializer: Serializer for serializing genotypes.
@@ -270,19 +270,19 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
         fitness_measure: str,
     ) -> bool:
         """
-        Try to initialize this class async from a database.
+        Try to initialize this class async from a database_karine_params.
 
         Called when creating an instance using `from_database`.
 
         :param database: Database to use for this optimizer.
-        :param session: Session to use when loading and saving data to the database during initialization.
+        :param session: Session to use when loading and saving data to the database_karine_params during initialization.
         :param db_id: Unique identifier in the completely program specifically made for this optimizer.
         :param genotype_type: Type of the genotype generic parameter.
         :param genotype_serializer: Serializer for serializing genotypes.
         :param fitness_type: Type of the fitness generic parameter.
         :param fitness_serializer: Serializer for serializing fitnesses.
-        :returns: True if this complete object could be deserialized from the database.
-        :raises IncompatibleError: In case the database is not compatible with this class.
+        :returns: True if this complete object could be deserialized from the database_karine_params.
+        :raises IncompatibleError: In case the database_karine_params is not compatible with this class.
         """
         self.__database = database
         self.__db_id = db_id
@@ -586,7 +586,7 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
 
         assert (
             self.__generation_index > 0
-        ), "Must create at least one generation beyond initial population. This behaviour is not supported."  # would break database structure
+        ), "Must create at least one generation beyond initial population. This behaviour is not supported."  # would break database_karine_params structure
 
     def _pop_relative_measures(self):
         # interdependent measures must be calculated sequentially (for after for)

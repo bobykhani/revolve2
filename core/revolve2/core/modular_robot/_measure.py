@@ -49,6 +49,7 @@ class Measure:
         self._coverage()
         self._proportion()
         self._symmetry()
+        self._sum_mask()
 
         self._relative_speed_y()
 
@@ -67,6 +68,9 @@ class Measure:
 
     def _brain_mask(self):
         self._measures['brain_mask'] = str(self._phenotype_brain._mask.genome)
+
+    def _sum_mask(self):
+        self._measures['sum_mask'] = sum(self._phenotype_brain._mask.genome)*10
 
     # behavioral measures
     # TODO simulation can continue slightly passed the defined sim time.

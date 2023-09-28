@@ -208,7 +208,7 @@ class GenotypeSerializer(Serializer[Genotype]):
         )
 
         genotypes = [
-            Genotype(body, brain,MaskGenome(3))
+            Genotype(body, brain,MaskGenome(10))
             for body, brain in zip(body_genotypes, brain_genotypes)
         ]
 
@@ -250,11 +250,13 @@ def random(
         num_initial_mutations,
         body,
     )
-    evolvable_mask = False
+    evolvable_mask = True
     mask = MaskGenome(10)
     # mask.genome = []
     if not evolvable_mask:
         mask.genome = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        #mask.genome = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
     return Genotype(body, brain, mask)
 
 
@@ -275,13 +277,13 @@ def mutate(
     :param rng: Random number generator.
     :returns: A mutated copy of the provided genotype.
     """
-    evolvable_mask = False
+    evolvable_mask = True
 
     multineat_rng = _multineat_rng_from_random(rng)
 
     if evolvable_mask:
         if (genotype.mask != None):
-            genotype.mask.mutate(0.2)
+            genotype.mask.mutate(0.02)
 
     return Genotype(
         mutate_v1(genotype.body, _MULTINEAT_PARAMS, innov_db_body, multineat_rng),
@@ -305,7 +307,7 @@ def crossover(
     """
     multineat_rng = _multineat_rng_from_random(rng)
 
-    evolvable_mask = False
+    evolvable_mask = True
 
     if evolvable_mask:
         return Genotype(
@@ -357,7 +359,7 @@ def develop(genotype: Genotype) -> ModularRobot:
     """
     bb = 'not evolvable'
     if bb != 'evolvable':
-        body = insect()
+        # body = insect()
         # body = babya()
         # body = babyb()
         # body = blokky()
@@ -372,7 +374,7 @@ def develop(genotype: Genotype) -> ModularRobot:
         # body = salamander()
         # body = squarish()
         # body = snake()
-        # body = spider()
+        body = spider()
         # body = stingray()
         # body = tinlicker()
         # body = turtle()

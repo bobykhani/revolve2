@@ -25,11 +25,11 @@ async def main() -> None:
     SAMPLING_FREQUENCY = 8
     CONTROL_FREQUENCY = 5
 
-    POPULATION_SIZE = 50
-    OFFSPRING_SIZE = 50
-    NUM_GENERATIONS = 50
+    POPULATION_SIZE = 100
+    OFFSPRING_SIZE = 100
+    NUM_GENERATIONS = 100
 
-    FITNESS_MEASURE = 'speed_y'
+    FITNESS_MEASURE = 'speed_y'#'sum_mask'
 
 
     logging.basicConfig(
@@ -97,8 +97,8 @@ async def main() -> None:
             offspring_size=OFFSPRING_SIZE,
             experiment_name=args.experiment_name,
             max_modules=args.max_modules,
-            crossover_prob=0.75,
-            mutation_prob=0.75,
+            crossover_prob=0.8,
+            mutation_prob=0.2,
             substrate_radius=args.substrate_radius,
             run_simulation=args.run_simulation,
             simulator=args.simulator,
