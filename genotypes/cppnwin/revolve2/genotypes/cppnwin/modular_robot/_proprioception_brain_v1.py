@@ -11,7 +11,10 @@ from revolve2.actor_controller import ActorController
 from revolve2.core.physics.running import (
     BatchResults,
 )
-from typing import List
+from typing import List, cast
+import multineat  # I assume you've imported this earlier
+
+
 
 
 def apply_mask(inputs: List[float], mask: List[int]) -> List[float]:
@@ -54,9 +57,21 @@ class ProprioceptionCPPNNetwork(ActorController):
         sin = math.sin(self._steps)
 
         # Assuming you want to add sin to each sensor value
+        self._sensors = apply_mask(self._sensors,self._mask)
+
         closed_loop = [(sensor + sin) for sensor in self._sensors]
 
-        output = self._evaluate_network(self.brain_net, closed_loop, self._mask)
+        if self._mask != None:
+            mask_str = str(self._mask.genome)
+            #
+            # # Save the mask string to a text file in a new line
+            # with open('mask_strings.txt', 'a') as file:
+            #     file.write(mask_str + '\n')
+
+            # closed_loop = apply_mask(closed_loop, self._mask)
+
+
+        output = self._evaluate_network(self.brain_net, closed_loop)
         output = list(np.clip(output, a_min=-self._dof_ranges, a_max=self._dof_ranges))
 
         # Option 1: Smoothed Transition to New Target
@@ -77,34 +92,12 @@ class ProprioceptionCPPNNetwork(ActorController):
         return self._dof_targets
 
 
-
-    # @staticmethod
-    # def _evaluate_network(
-    #     network: multineat.NeuralNetwork, inputs: List[float], mask
-    # ) -> float:
-    #     #save the masks as string in a text file
-    #
-    #
-    #     inputs = apply_mask(inputs, mask)
-    #     network.Input(inputs)
-    #     network.ActivateAllLayers()
-    #     return cast(float, network.Output())  # TODO missing multineat typing
-    from typing import List, cast
-    import multineat  # I assume you've imported this earlier
-
     @staticmethod
     def _evaluate_network(
-            network: multineat.NeuralNetwork, inputs: List[float], mask
+            network: multineat.NeuralNetwork, inputs: List[float]
     ) -> float:
         # Convert the mask to a string representation (depends on the type of 'mask')
-        if mask != None:
-            mask_str = str(mask.genome)
-            #
-            # # Save the mask string to a text file in a new line
-            # with open('mask_strings.txt', 'a') as file:
-            #     file.write(mask_str + '\n')
 
-            inputs = apply_mask(inputs, mask)
         network.Input(inputs)
         network.ActivateAllLayers()
         return cast(float, network.Output())  # TODO missing multineat typing

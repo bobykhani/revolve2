@@ -251,7 +251,7 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
         self.__ea_optimizer_id = new_opt.id
 
         await self.__save_generation_using_session(
-            session, None, None, None, self.__latest_population, None, None, None
+            session, None, None, None, self.__latest_population, None, None, None, None
         )
         print('bobak')
 
@@ -711,7 +711,8 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
         new_individuals: List[_Individual[Genotype]],
         new_measures: Optional[List[Measure]],
         new_states: List[Tuple[float, State]],
-        latest_relative_measures: Dict
+        latest_relative_measures: Dict,
+        generate_body_images: bool = False,
     ) -> None:
         # TODO this function can probably be simplified as well as optimized.
         # but it works so I'll leave it for now.
@@ -798,11 +799,12 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
             print("The new directory is created!")
 
         # save body images
-        for ind, body in zip(self.__latest_population, bodies):
-            render = Render()
-            id = ind.id
-            img_path = f'{folder}/body_images/generation_{self.generation_index}/individual_{id}.png'
-            render.render_robot(body[0].core, img_path)
+        if generate_body_images:
+            for ind, body in zip(self.__latest_population, bodies):
+                render = Render()
+                id = ind.id
+                img_path = f'{folder}/body_images/generation_{self.generation_index}/individual_{id}.png'
+                render.render_robot(body[0].core, img_path)
 
 
 

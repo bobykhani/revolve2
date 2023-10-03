@@ -251,10 +251,10 @@ def random(
         body,
     )
     evolvable_mask = True
-    mask = MaskGenome(10)
+    mask = MaskGenome(8)
     # mask.genome = []
     if not evolvable_mask:
-        mask.genome = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        mask.genome = [1, 1, 1, 1, 1, 1, 1, 1]
         #mask.genome = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     return Genotype(body, brain, mask)
