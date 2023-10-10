@@ -8,7 +8,9 @@ import mujoco
 import mujoco_viewer
 import numpy as np
 import numpy.typing as npt
-
+##############################################################################################################
+from .OpenGLCamera import OpenGLVision
+##############################################################################################################
 try:
     import logging
 
@@ -91,6 +93,9 @@ class LocalRunner(Runner):
         logging.info(f"Environment {env_index}")
 
         model = cls._make_model(env_descr, simulation_timestep)
+        ##############################################################################################################
+        vision_obj = OpenGLVision(model, (10, 10), True)
+        ##############################################################################################################
 
         data = mujoco.MjData(model)
 
@@ -147,6 +152,13 @@ class LocalRunner(Runner):
                 last_control_time = math.floor(time / control_step) * control_step
                 control_user = ActorControl()
                 env_descr.controller.control(control_step, control_user)
+                ##############################################################################################################
+                current_vision = vision_obj.process(model, data)
+                current_vision = np.rot90(current_vision, 2)
+                cv2.imwrite(f"Camera/{env_index}_{time}.png", current_vision)
+                # controller.get_action()
+                ##############################################################################################################
+
                 actor_targets = control_user._dof_targets
                 actor_targets.sort(key=lambda t: t[0])
                 targets = [
@@ -373,6 +385,19 @@ class LocalRunner(Runner):
                     joint=robot.find(namespace="joint", identifier=joint.name),
                 )
 
+            aabb = posed_actor.actor.calc_aabb()
+            fps_cam_pos = [
+                aabb.offset.x + aabb.size.x / 2,
+                aabb.offset.y,
+                aabb.offset.z
+            ]
+            robot.worldbody.add("camera", name="vision", mode="fixed", dclass=robot.full_identifier,
+                                pos=fps_cam_pos, xyaxes="0 -1 0 0 0 1")
+            robot.worldbody.add('site',
+                                name=robot.full_identifier[:-1] + "_camera",
+                                pos=fps_cam_pos, rgba=[0, 0, 1, 1],
+                                type="ellipsoid", size=[0.0001, 0.025, 0.025])
+
             attachment_frame = env_mjcf.attach(robot)
             attachment_frame.add("freejoint")
             attachment_frame.pos = [
@@ -432,7 +457,6 @@ class LocalRunner(Runner):
         # explicitly copy because the Vector3 and Quaternion classes don't copy the underlying structure
         position = Vector3([n for n in data.qpos[qindex : qindex + 3]])
         orientation = Quaternion([n for n in data.qpos[qindex + 3 : qindex + 3 + 4]])
-
         return ActorState(position, orientation)
 
     @staticmethod
