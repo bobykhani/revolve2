@@ -31,7 +31,7 @@ async def main() -> None:
 
     FITNESS_MEASURE = 'speed_y'#'sum_mask'
 
-    ROBOT = 'salamander'
+    ROBOT = 'blokky'
 
 
     logging.basicConfig(

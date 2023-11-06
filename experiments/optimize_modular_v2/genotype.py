@@ -1,5 +1,5 @@
 """Genotype for a modular robot body and brain."""
-
+import sys
 from dataclasses import dataclass
 from random import Random
 from typing import List
@@ -38,45 +38,7 @@ from sqlalchemy.future import select
 
 
 def _make_multineat_params() -> multineat.Parameters:
-    # multineat_params = multineat.Parameters()
-    #
-    # multineat_params.MutateRemLinkProb = 0.02
-    # multineat_params.RecurrentProb = 0.0
-    # multineat_params.OverallMutationRate = 0.15
-    # multineat_params.MutateAddLinkProb = 0.08
-    # multineat_params.MutateAddNeuronProb = 0.01
-    # multineat_params.MutateWeightsProb = 0.90
-    # multineat_params.MaxWeight = 8.0
-    # multineat_params.WeightMutationMaxPower = 0.2
-    # multineat_params.WeightReplacementMaxPower = 1.0
-    # multineat_params.MutateActivationAProb = 0.0
-    # multineat_params.ActivationAMutationMaxPower = 0.5
-    # multineat_params.MinActivationA = 0.05
-    # multineat_params.MaxActivationA = 6.0
-    #
-    # multineat_params.MutateNeuronActivationTypeProb = 0.03
-    #
-    # multineat_params.MutateOutputActivationFunction = False
-    #
-    # multineat_params.ActivationFunction_SignedSigmoid_Prob = 0.0
-    # multineat_params.ActivationFunction_UnsignedSigmoid_Prob = 0.0
-    # multineat_params.ActivationFunction_Tanh_Prob = 1.0
-    # multineat_params.ActivationFunction_TanhCubic_Prob = 0.0
-    # multineat_params.ActivationFunction_SignedStep_Prob = 1.0
-    # multineat_params.ActivationFunction_UnsignedStep_Prob = 0.0
-    # multineat_params.ActivationFunction_SignedGauss_Prob = 1.0
-    # multineat_params.ActivationFunction_UnsignedGauss_Prob = 0.0
-    # multineat_params.ActivationFunction_Abs_Prob = 0.0
-    # multineat_params.ActivationFunction_SignedSine_Prob = 1.0
-    # multineat_params.ActivationFunction_UnsignedSine_Prob = 0.0
-    # multineat_params.ActivationFunction_Linear_Prob = 1.0
-    #
-    # multineat_params.MutateNeuronTraitsProb = 0.0
-    # multineat_params.MutateLinkTraitsProb = 0.0
-    #
-    # multineat_params.AllowLoops = False
-    #
-    # return multineat_params
+
     multineat_params = multineat.Parameters()
 
     multineat_params.OverallMutationRate = 1
@@ -244,6 +206,46 @@ def random(
         plastic_body = 0,
     )
 
+
+    evolvable_mask = True
+
+    if body_fixed == 'spider':
+        x = len(spider().find_active_hinges())
+    elif body_fixed == 'salamander':
+        x = len(salamander().find_active_hinges())
+    elif body_fixed == 'snake':
+        x = len(snake().find_active_hinges())
+    elif body_fixed == 'insect':
+        x = len(insect().find_active_hinges())
+    elif body_fixed == 'babya':
+        x = len(babya().find_active_hinges())
+    elif body_fixed == 'babyb':
+        x = len(babyb().find_active_hinges())
+    elif body_fixed == 'blokky':
+        x = len(blokky().find_active_hinges())
+    elif body_fixed == 'garrix':
+        x = len(garrix().find_active_hinges())
+    elif body_fixed == 'gecko':
+        x = len(gecko().find_active_hinges())
+    elif body_fixed == 'stingray':
+        x = len(stingray().find_active_hinges())
+    elif body_fixed == 'tinlicker':
+        x = len(tinlicker().find_active_hinges())
+    elif body_fixed == 'turtle':
+        x = len(turtle().find_active_hinges())
+    elif body_fixed == 'ww':
+        x = len(ww().find_active_hinges())
+    elif body_fixed == 'zappa':
+        x = len(zappa().find_active_hinges())
+    elif body_fixed == 'ant':
+        x = len(ant().find_active_hinges())
+    elif body_fixed == 'park':
+        x = len(park().find_active_hinges())
+    else:
+        # show error message and stop the program
+        print('ERROR: no body fixed')
+        sys.exit()
+
     brain = brain_random(
         innov_db_brain,
         multineat_rng,
@@ -251,20 +253,12 @@ def random(
         multineat.ActivationFunction.SIGNED_SINE,
         num_initial_mutations,
         body,
+        x
     )
-    evolvable_mask = True
 
-    if body_fixed == 'spider':
-        x = len(spider().find_active_hinges())
-        mask = MaskGenome(x)
-        if not evolvable_mask:
-            mask.genome = np.ones(x)
-    if body_fixed == 'salamander':
-        x = len(salamander().find_active_hinges())
-        mask = MaskGenome(x)
-        # mask.genome = []
-        if not evolvable_mask:
-            mask.genome = np.ones(x)
+    mask = MaskGenome(x)
+    if not evolvable_mask:
+        mask.genome = np.ones(x)
 
     return Genotype(body, brain, mask)
 
@@ -370,30 +364,39 @@ def develop(genotype: Genotype,robot) -> ModularRobot:
     if bb != 'evolvable':
         if robot == 'spider':
             body = spider()
-        if robot == 'salamander':
+        elif robot == 'salamander':
             body = salamander()
-        # body = insect()
-        # body = babya()
-        # body = babyb()
-        # body = blokky()
-        # body = garrix()
-        # body = gecko()
-        # body = insect()
-        # body = linkin()
-        # body = longleg()
-        # body = penguin()
-        # body = pentapod()
-        # body = queen()
-        # body = squarish()
-        # body = snake()
-        # body = spider()
-        # body = stingray()
-        # body = tinlicker()
-        # body = turtle()
-        # body = ww()
-        # body = zappa()
-        # body = ant()
-        # body = park()
+        elif robot == 'insect':
+            body = insect()
+        elif robot == 'babya':
+            body = babya()
+        elif robot == 'babyb':
+            body = babyb()
+        elif robot == 'blokky':
+            body = blokky()
+        elif robot == 'garrix':
+            body = garrix()
+        elif robot == 'gecko':
+            body = gecko()
+        elif robot == 'stingray':
+            body = stingray()
+        elif robot == 'tinlicker':
+            body = tinlicker()
+        elif robot == 'turtle':
+            body = turtle()
+        elif robot == 'ww':
+            body = ww()
+        elif robot == 'zappa':
+            body = zappa()
+        elif robot == 'ant':
+            body = ant()
+        elif robot == 'park':
+            body = park()
+        else:
+            # show error message and stop the program
+            print('ERROR: no body fixed')
+            sys.exit()
+
         body = {0: body}
         #body = {0: spider()}
     else:

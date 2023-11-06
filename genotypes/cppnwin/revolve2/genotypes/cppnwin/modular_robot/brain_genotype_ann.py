@@ -15,6 +15,7 @@ def random_v1(
     output_activation_func: multineat.ActivationFunction,
     num_initial_mutations: int,
     body: Body,
+    joint_count: int,
     # n_env_conditions: int,
     # plastic_brain: int,
 ) -> Genotype:
@@ -24,10 +25,7 @@ def random_v1(
     #assert output_activation_func == multineat.ActivationFunction.SIGNED_SINE
     bd = body_develop(body).develop()
     robot_parts = bd[1]
-    active_hinge_count = sum(1 for part in robot_parts.values() if "_active_hinge.ActiveHinge" in str(type(part)))
-
-    if active_hinge_count == 0:
-        active_hinge_count = 8
+    active_hinge_count = joint_count#
 
     # using more than 8 inpurs gives me segmentation fault! why?
     return base_random_v1(
