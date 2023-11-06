@@ -76,6 +76,8 @@ class Optimizer(EAOptimizer[Genotype, float]):
     _run_simulation: bool
     _simulator: str
 
+    _robot: str
+
 
     async def ainit_new(  # type: ignore # TODO for now ignoring mypy complaint about LSP problem, override parent's ainit
         self,
@@ -101,7 +103,9 @@ class Optimizer(EAOptimizer[Genotype, float]):
         mutation_prob: float,
         substrate_radius: str,
         run_simulation: bool,
-        simulator: str
+        simulator: str,
+
+        robot: str
 
     ) -> None:
         """
@@ -162,6 +166,7 @@ class Optimizer(EAOptimizer[Genotype, float]):
         self.mutation_prob = mutation_prob,
         self.substrate_radius = substrate_radius,
         self.run_simulation = False,
+        self._robot = robot
         # create database_karine_params structure if not exists
         # TODO this works but there is probably a better way
         await (await session.connection()).run_sync(DbBase.metadata.create_all)
@@ -246,7 +251,7 @@ class Optimizer(EAOptimizer[Genotype, float]):
         return True
 
     def _init_runner(self) -> None:
-        self._runner = LocalRunner(headless=True, num_simulators=8)
+        self._runner = LocalRunner(headless=False, num_simulators=1)
 
     def _select_parents(
         self,
@@ -312,8 +317,8 @@ class Optimizer(EAOptimizer[Genotype, float]):
         )
         phenotypes = []
         for genotype in genotypes:
-            phenotypes.append(develop(genotype))
-            actor, controller = develop(genotype).make_actor_and_controller_ann()
+            phenotypes.append(develop(genotype, self._robot))
+            actor, controller = develop(genotype,self._robot).make_actor_and_controller_ann()
             bounding_box = actor.calc_aabb()
             env = Environment(EnvironmentActorController(controller))
             env.static_geometries.extend(self._TERRAIN.static_geometry)

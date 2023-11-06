@@ -5,6 +5,7 @@ from random import Random
 from typing import List
 
 import multineat
+import numpy as np
 import sqlalchemy
 
 #from experiments.optimize_modular_v2.body_spider import make_body_spider
@@ -220,6 +221,7 @@ def random(
     innov_db_brain: multineat.InnovationDatabase,
     rng: Random,
     num_initial_mutations: int,
+    body_fixed = None
 ) -> Genotype:
     """
     Create a random genotype.
@@ -251,11 +253,18 @@ def random(
         body,
     )
     evolvable_mask = True
-    mask = MaskGenome(8)
-    # mask.genome = []
-    if not evolvable_mask:
-        mask.genome = [1, 1, 1, 1, 1, 1, 1, 1]
-        #mask.genome = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    if body_fixed == 'spider':
+        x = len(spider().find_active_hinges())
+        mask = MaskGenome(x)
+        if not evolvable_mask:
+            mask.genome = np.ones(x)
+    if body_fixed == 'salamander':
+        x = len(salamander().find_active_hinges())
+        mask = MaskGenome(x)
+        # mask.genome = []
+        if not evolvable_mask:
+            mask.genome = np.ones(x)
 
     return Genotype(body, brain, mask)
 
@@ -350,7 +359,7 @@ def crossover(
             parent1.mask
         )
 
-def develop(genotype: Genotype) -> ModularRobot:
+def develop(genotype: Genotype,robot) -> ModularRobot:
     """
     Develop the genotype into a modular robot.
 
@@ -359,6 +368,10 @@ def develop(genotype: Genotype) -> ModularRobot:
     """
     bb = 'not evolvable'
     if bb != 'evolvable':
+        if robot == 'spider':
+            body = spider()
+        if robot == 'salamander':
+            body = salamander()
         # body = insect()
         # body = babya()
         # body = babyb()
@@ -371,10 +384,9 @@ def develop(genotype: Genotype) -> ModularRobot:
         # body = penguin()
         # body = pentapod()
         # body = queen()
-        # body = salamander()
         # body = squarish()
         # body = snake()
-        body = spider()
+        # body = spider()
         # body = stingray()
         # body = tinlicker()
         # body = turtle()

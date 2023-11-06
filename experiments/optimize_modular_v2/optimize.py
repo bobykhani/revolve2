@@ -25,11 +25,13 @@ async def main() -> None:
     SAMPLING_FREQUENCY = 8
     CONTROL_FREQUENCY = 5
 
-    POPULATION_SIZE = 100
-    OFFSPRING_SIZE = 100
-    NUM_GENERATIONS = 100
+    POPULATION_SIZE = 10
+    OFFSPRING_SIZE = 10
+    NUM_GENERATIONS = 10
 
     FITNESS_MEASURE = 'speed_y'#'sum_mask'
+
+    ROBOT = 'salamander'
 
 
     logging.basicConfig(
@@ -63,7 +65,7 @@ async def main() -> None:
     innov_db_brain = multineat.InnovationDatabase()
 
     initial_population = [
-        random_genotype(innov_db_body, innov_db_brain, rng, NUM_INITIAL_MUTATIONS)
+        random_genotype(innov_db_body, innov_db_brain, rng, NUM_INITIAL_MUTATIONS, ROBOT)
         for _ in range(POPULATION_SIZE)
     ]
     # process_id = process_id_gen.gen()
@@ -102,6 +104,7 @@ async def main() -> None:
             substrate_radius=args.substrate_radius,
             run_simulation=args.run_simulation,
             simulator=args.simulator,
+            robot = ROBOT,
         )
 
     logging.info("Starting optimization process..")
