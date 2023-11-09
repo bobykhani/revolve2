@@ -12,6 +12,7 @@ from revolve2.core.optimization import DbId
 from revolve2.core.optimization import ProcessIdGen, Process
 from revolve2.core.config import Config
 from revolve2.standard_resources import terrains
+from CONFIG import *
 
 async def main() -> None:
     args = Config()._get_params()
@@ -31,7 +32,7 @@ async def main() -> None:
 
     FITNESS_MEASURE = 'speed_y'
 
-    ROBOT = 'salamander'
+    ROBOT = ROBOT_BODY
 
 
     logging.basicConfig(
