@@ -1,67 +1,62 @@
 """Genotype for a modular robot body and brain."""
-
+import sys
 from dataclasses import dataclass
 from random import Random
 from typing import List
 
 import multineat
+import numpy as np
 import sqlalchemy
+
+#from experiments.optimize_modular_v2.body_spider import make_body_spider
+from experiments.optimize_modular_v2.robots import *
 from revolve2.core.database import IncompatibleError, Serializer
 from revolve2.core.modular_robot import ModularRobot
 from revolve2.genotypes.cppnwin import Genotype as CppnwinGenotype
 from revolve2.genotypes.cppnwin import GenotypeSerializer as CppnwinGenotypeSerializer
 from revolve2.genotypes.cppnwin import crossover_v1, mutate_v1
-from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v1 import (
-    develop_v1 as body_develop,
+from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v2 import (
+    Develop as body_develop
 )
-from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v1 import (
+from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v2 import (
     random_v1 as body_random,
 )
-from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_cpg_v1 import (
-    develop_v1 as brain_develop,
-)
-from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_cpg_v1 import (
-    random_v1 as brain_random,
-)
+from mask_gene.mask_genotype import MaskGenome
+
+# from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_cpg_v1 import (
+#     develop_v1 as brain_develop,
+# )
+# from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_cpg_v1 import (
+#     random_v1 as brain_random,
+# )
+
+from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_ann import (random_v1 as brain_random, develop_v1 as brain_develop)
+
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.future import select
 
 
 def _make_multineat_params() -> multineat.Parameters:
+
     multineat_params = multineat.Parameters()
 
-    multineat_params.MutateRemLinkProb = 0.02
+    multineat_params.OverallMutationRate = 1
+    multineat_params.MutateAddLinkProb = 0.5
+    multineat_params.MutateRemLinkProb = 0.5
+    multineat_params.MutateAddNeuronProb = 0.2
+    multineat_params.MutateRemSimpleNeuronProb = 0.2
     multineat_params.RecurrentProb = 0.0
-    multineat_params.OverallMutationRate = 0.15
-    multineat_params.MutateAddLinkProb = 0.08
-    multineat_params.MutateAddNeuronProb = 0.01
-    multineat_params.MutateWeightsProb = 0.90
-    multineat_params.MaxWeight = 8.0
-    multineat_params.WeightMutationMaxPower = 0.2
+    multineat_params.MutateWeightsProb = 0.8
+    multineat_params.WeightMutationMaxPower = 0.5
     multineat_params.WeightReplacementMaxPower = 1.0
-    multineat_params.MutateActivationAProb = 0.0
+    multineat_params.MutateActivationAProb = 0
     multineat_params.ActivationAMutationMaxPower = 0.5
     multineat_params.MinActivationA = 0.05
     multineat_params.MaxActivationA = 6.0
-
-    multineat_params.MutateNeuronActivationTypeProb = 0.03
-
+    multineat_params.MaxWeight = 8.0
+    multineat_params.MutateNeuronActivationTypeProb = 0
     multineat_params.MutateOutputActivationFunction = False
-
-    multineat_params.ActivationFunction_SignedSigmoid_Prob = 0.0
-    multineat_params.ActivationFunction_UnsignedSigmoid_Prob = 0.0
-    multineat_params.ActivationFunction_Tanh_Prob = 1.0
-    multineat_params.ActivationFunction_TanhCubic_Prob = 0.0
-    multineat_params.ActivationFunction_SignedStep_Prob = 1.0
-    multineat_params.ActivationFunction_UnsignedStep_Prob = 0.0
-    multineat_params.ActivationFunction_SignedGauss_Prob = 1.0
-    multineat_params.ActivationFunction_UnsignedGauss_Prob = 0.0
-    multineat_params.ActivationFunction_Abs_Prob = 0.0
-    multineat_params.ActivationFunction_SignedSine_Prob = 1.0
-    multineat_params.ActivationFunction_UnsignedSine_Prob = 0.0
-    multineat_params.ActivationFunction_Linear_Prob = 1.0
-
     multineat_params.MutateNeuronTraitsProb = 0.0
     multineat_params.MutateLinkTraitsProb = 0.0
 
@@ -79,6 +74,7 @@ class Genotype:
 
     body: CppnwinGenotype
     brain: CppnwinGenotype
+    mask: MaskGenome
 
 
 class GenotypeSerializer(Serializer[Genotype]):
@@ -168,7 +164,7 @@ class GenotypeSerializer(Serializer[Genotype]):
         )
 
         genotypes = [
-            Genotype(body, brain)
+            Genotype(body, brain,MaskGenome(10))
             for body, brain in zip(body_genotypes, brain_genotypes)
         ]
 
@@ -180,6 +176,7 @@ def random(
     innov_db_brain: multineat.InnovationDatabase,
     rng: Random,
     num_initial_mutations: int,
+    body_fixed = None
 ) -> Genotype:
     """
     Create a random genotype.
@@ -196,9 +193,51 @@ def random(
         innov_db_body,
         multineat_rng,
         _MULTINEAT_PARAMS,
-        multineat.ActivationFunction.SIGNED_SINE,
-        num_initial_mutations,
+        multineat.ActivationFunction.TANH,
+        0,
+        n_env_conditions = 0,
+        plastic_body = 0,
     )
+
+
+    evolvable_mask = True
+
+    if body_fixed == 'spider':
+        x = len(spider().find_active_hinges())
+    elif body_fixed == 'salamander':
+        x = len(salamander().find_active_hinges())
+    elif body_fixed == 'snake':
+        x = len(snake().find_active_hinges())
+    elif body_fixed == 'insect':
+        x = len(insect().find_active_hinges())
+    elif body_fixed == 'babya':
+        x = len(babya().find_active_hinges())
+    elif body_fixed == 'babyb':
+        x = len(babyb().find_active_hinges())
+    elif body_fixed == 'blokky':
+        x = len(blokky().find_active_hinges())
+    elif body_fixed == 'garrix':
+        x = len(garrix().find_active_hinges())
+    elif body_fixed == 'gecko':
+        x = len(gecko().find_active_hinges())
+    elif body_fixed == 'stingray':
+        x = len(stingray().find_active_hinges())
+    elif body_fixed == 'tinlicker':
+        x = len(tinlicker().find_active_hinges())
+    elif body_fixed == 'turtle':
+        x = len(turtle().find_active_hinges())
+    elif body_fixed == 'ww':
+        x = len(ww().find_active_hinges())
+    elif body_fixed == 'zappa':
+        x = len(zappa().find_active_hinges())
+    elif body_fixed == 'ant':
+        x = len(ant().find_active_hinges())
+    elif body_fixed == 'park':
+        x = len(park().find_active_hinges())
+    else:
+        # show error message and stop the program
+        print('ERROR: no body fixed')
+        sys.exit()
 
     brain = brain_random(
         innov_db_brain,
@@ -206,9 +245,15 @@ def random(
         _MULTINEAT_PARAMS,
         multineat.ActivationFunction.SIGNED_SINE,
         num_initial_mutations,
+        body,
+        x
     )
 
-    return Genotype(body, brain)
+    mask = MaskGenome(x)
+    if not evolvable_mask:
+        mask.genome = np.ones(x)
+
+    return Genotype(body, brain, mask)
 
 
 def mutate(
@@ -228,11 +273,18 @@ def mutate(
     :param rng: Random number generator.
     :returns: A mutated copy of the provided genotype.
     """
+    evolvable_mask = True
+
     multineat_rng = _multineat_rng_from_random(rng)
+
+    if evolvable_mask:
+        if (genotype.mask != None):
+            genotype.mask.mutate(0.02)
 
     return Genotype(
         mutate_v1(genotype.body, _MULTINEAT_PARAMS, innov_db_body, multineat_rng),
         mutate_v1(genotype.brain, _MULTINEAT_PARAMS, innov_db_brain, multineat_rng),
+        genotype.mask
     )
 
 
@@ -251,35 +303,99 @@ def crossover(
     """
     multineat_rng = _multineat_rng_from_random(rng)
 
-    return Genotype(
-        crossover_v1(
-            parent1.body,
-            parent2.body,
-            _MULTINEAT_PARAMS,
-            multineat_rng,
-            False,
-            False,
-        ),
-        crossover_v1(
-            parent1.brain,
-            parent2.brain,
-            _MULTINEAT_PARAMS,
-            multineat_rng,
-            False,
-            False,
-        ),
-    )
+    evolvable_mask = True
 
+    if evolvable_mask:
+        return Genotype(
+            crossover_v1(
+                parent1.body,
+                parent2.body,
+                _MULTINEAT_PARAMS,
+                multineat_rng,
+                False,
+                False,
+            ),
+            crossover_v1(
+                parent1.brain,
+                parent2.brain,
+                _MULTINEAT_PARAMS,
+                multineat_rng,
+                False,
+                False,
+            ),
+            parent1.mask.crossover(parent2.mask)
+        )
+    else:
+        return Genotype(
+            crossover_v1(
+                parent1.body,
+                parent2.body,
+                _MULTINEAT_PARAMS,
+                multineat_rng,
+                False,
+                False,
+            ),
+            crossover_v1(
+                parent1.brain,
+                parent2.brain,
+                _MULTINEAT_PARAMS,
+                multineat_rng,
+                False,
+                False,
+            ),
+            parent1.mask
+        )
 
-def develop(genotype: Genotype) -> ModularRobot:
+def develop(genotype: Genotype,robot) -> ModularRobot:
     """
     Develop the genotype into a modular robot.
 
     :param genotype: The genotype to create the robot from.
     :returns: The created robot.
     """
-    body = body_develop(genotype.body)
-    brain = brain_develop(genotype.brain, body)
+    bb = 'not evolvable'
+    if bb != 'evolvable':
+        if robot == 'spider':
+            body = spider()
+        elif robot == 'salamander':
+            body = salamander()
+        elif robot == 'insect':
+            body = insect()
+        elif robot == 'babya':
+            body = babya()
+        elif robot == 'babyb':
+            body = babyb()
+        elif robot == 'blokky':
+            body = blokky()
+        elif robot == 'garrix':
+            body = garrix()
+        elif robot == 'gecko':
+            body = gecko()
+        elif robot == 'stingray':
+            body = stingray()
+        elif robot == 'tinlicker':
+            body = tinlicker()
+        elif robot == 'turtle':
+            body = turtle()
+        elif robot == 'ww':
+            body = ww()
+        elif robot == 'zappa':
+            body = zappa()
+        elif robot == 'ant':
+            body = ant()
+        elif robot == 'park':
+            body = park()
+        else:
+            # show error message and stop the program
+            print('ERROR: no body fixed')
+            sys.exit()
+
+        body = {0: body}
+        #body = {0: spider()}
+    else:
+        b = body_develop(genotype.body)
+        body = b.develop()
+    brain = brain_develop(genotype.brain, body, genotype.mask)
     return ModularRobot(body, brain)
 
 

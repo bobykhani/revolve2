@@ -1,6 +1,7 @@
 """Setup and running of the optimize modular program."""
 
 import logging
+import random
 from random import Random
 
 import multineat
@@ -20,15 +21,17 @@ async def main() -> None:
     # number of initial mutations for body and brain CPPNWIN networks
     NUM_INITIAL_MUTATIONS = 10
 
-    SIMULATION_TIME = 30
+    SIMULATION_TIME = 20
     SAMPLING_FREQUENCY = 8
-    CONTROL_FREQUENCY = 60
+    CONTROL_FREQUENCY = 5
 
     POPULATION_SIZE = 10
-    OFFSPRING_SIZE = 5
-    NUM_GENERATIONS = 10
+    OFFSPRING_SIZE = 10
+    NUM_GENERATIONS = 200
 
-    FITNESS_MEASURE = 'speed_y'
+    FITNESS_MEASURE = 'speed_y'#'sum_mask'
+
+    ROBOT = 'salamander'
 
 
     logging.basicConfig(
@@ -47,10 +50,11 @@ async def main() -> None:
 
     # random number generator
     rng = Random()
-    rng.seed(1900)
+    # rng.seed(random.random())
+    rng.seed(10)
 
     # database_karine_params
-    database = open_async_database_sqlite("./database_karine_params", create=True)
+    database = open_async_database_sqlite("./database_", create=True)
 
     # process_id_gen = ProcessIdGen()
 
@@ -62,7 +66,7 @@ async def main() -> None:
     innov_db_brain = multineat.InnovationDatabase()
 
     initial_population = [
-        random_genotype(innov_db_body, innov_db_brain, rng, NUM_INITIAL_MUTATIONS)
+        random_genotype(innov_db_body, innov_db_brain, rng, NUM_INITIAL_MUTATIONS, ROBOT)
         for _ in range(POPULATION_SIZE)
     ]
     # process_id = process_id_gen.gen()
@@ -96,11 +100,12 @@ async def main() -> None:
             offspring_size=OFFSPRING_SIZE,
             experiment_name=args.experiment_name,
             max_modules=args.max_modules,
-            crossover_prob=args.crossover_prob,
-            mutation_prob=args.mutation_prob,
+            crossover_prob=0.8,
+            mutation_prob=0.2,
             substrate_radius=args.substrate_radius,
             run_simulation=args.run_simulation,
             simulator=args.simulator,
+            robot = ROBOT,
         )
 
     logging.info("Starting optimization process..")

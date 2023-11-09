@@ -9,7 +9,7 @@ import mujoco
 import mujoco_viewer
 import numpy as np
 import numpy.typing as npt
-from ._openglvision import OpenGLVision
+# from ._openglvision import OpenGLVision
 
 try:
     import logging
@@ -184,17 +184,8 @@ class LocalRunner(Runner):
                     )
                 )
 
-            controller = TestController(model)
-            #make a random value for the action
+            # controller = TestController(model)
             act = np.array([])
-#            act = np.random.uniform(-np.pi,np.pi, 16)
-       ###    act = env_descr.controller.actor_controller._state+1
-       ###     print(act)
-            # make an action from the controller
-        ### act = controller.set_action(action = act)#[1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0,1.0, 2.0])
-            #
-            # action = controller.get_action(act)
-            # data.ctrl[:] = action
 
             # step simulation
             mujoco.mj_step(model, data)

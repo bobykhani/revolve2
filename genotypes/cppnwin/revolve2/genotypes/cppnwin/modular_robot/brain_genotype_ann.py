@@ -23,8 +23,8 @@ def random_v1(
     # other activation functions could work too, but this has been tested.
     # if you want another one, make sure it's output is between -1 and 1.
     #assert output_activation_func == multineat.ActivationFunction.SIGNED_SINE
-    bd = body_develop(body).develop()
-    robot_parts = bd[1]
+    # bd = body_develop(body).develop()
+    # robot_parts = bd[1]
     active_hinge_count = joint_count#
 
     # using more than 8 inpurs gives me segmentation fault! why?
