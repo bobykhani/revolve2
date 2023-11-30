@@ -712,7 +712,7 @@ class EAOptimizer(Process, Generic[Genotype, Measure]):
         new_measures: Optional[List[Measure]],
         new_states: List[Tuple[float, State]],
         latest_relative_measures: Dict,
-        generate_body_images: bool = False,
+        generate_body_images: bool = True,
     ) -> None:
         # TODO this function can probably be simplified as well as optimized.
         # but it works so I'll leave it for now.

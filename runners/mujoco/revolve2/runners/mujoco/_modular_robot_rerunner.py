@@ -10,7 +10,7 @@ from revolve2.core.physics.environment_actor_controller import (
 )
 from revolve2.core.physics.running import Batch, Environment, PosedActor, RecordSettings
 from revolve2.runners.mujoco import LocalRunner
-
+from revolve2.core.physics.running._record_settings import RecordSettings
 
 class ModularRobotRerunner:
     """Rerunner for a single robot that uses Mujoco."""
@@ -23,7 +23,10 @@ class ModularRobotRerunner:
         simulation_time: int = 1000000,
         start_paused: bool = False,
         record_settings: Optional[RecordSettings] = None,
+        exp: str = None,
     ) -> None:
+        rs = RecordSettings("./video/"+exp)
+        record_settings = rs
         """
         Rerun a single robot.
 

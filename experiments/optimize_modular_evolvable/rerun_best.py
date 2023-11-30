@@ -8,7 +8,7 @@ from revolve2.runners.mujoco import ModularRobotRerunner
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.future import select
 from revolve2.standard_resources import terrains
-
+from CONFIG import *
 async def main() -> None:
     """Run the script."""
     db = open_async_database_sqlite("./database_")
@@ -33,7 +33,7 @@ async def main() -> None:
 
     rerunner = ModularRobotRerunner()
     #await rerunner.rerun(develop(genotype), 60, terrain= terrains.crater([20,20],0.3,1))
-    await rerunner.rerun(develop(genotype), 5, terrain = terrains.flat())
+    await rerunner.rerun(develop(genotype,ROBOT_BODY), 5, terrain = terrains.flat())
 
 
 if __name__ == "__main__":

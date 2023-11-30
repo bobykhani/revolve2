@@ -17,6 +17,51 @@ class Render:
     RIGHT = 2
     LEFT = 1
 
+    def get_active_hinge_ids_ordered(self, module):
+        """
+        Traverse the robot structure and collect IDs of all Active Hinge modules.
+        Sort them by their position in the grid from upper-left to bottom-right.
+        @param module: The root module of the robot.
+        @return: Sorted list of IDs of Active Hinge modules.
+        """
+        active_hinge_ids = []
+
+        # Recursive helper function to traverse and collect data
+        def traverse(module, x=0, y=0):
+            if isinstance(module, ActiveHinge):
+                grid_position = y * grid_width + x  # Calculate grid position
+                active_hinge_ids.append((module.id, grid_position))
+
+            if module.has_children():
+                for core_slot, child_module in enumerate(module.children):
+                    if child_module is not None:
+                        new_x, new_y = self.update_coordinates(x, y, core_slot, module)
+                        traverse(child_module, new_x, new_y)
+
+        # After traversal
+        active_hinge_ids.sort(key=lambda item: item[1])  # Sort based on grid position
+
+        # Extract and return only the IDs and their grid positions
+        return active_hinge_ids
+
+        # Sort by y-coordinate first (for rows), then by x-coordinate (within a row)
+        active_hinge_ids.sort(key=lambda item: (item[1][1], item[1][0]))
+
+        # Extract and return only the IDs
+        return [id for id, _ in active_hinge_ids]
+
+    def update_coordinates(self, x, y, slot, parent_module):
+        if slot == 0:  # assuming slot 0 means 'right'
+            return x + 1, y
+        elif slot == 1:  # assuming slot 1 means 'left'
+            return x - 1, y
+        elif slot == 2:  # assuming slot 2 means 'down'
+            return x, y + 1
+        elif slot == 3:  # assuming slot 3 means 'up'
+            return x, y - 1
+        else:
+            return x, y  # Default case, if slot is not recognized
+
     def parse_body_to_draw(self, canvas, module, slot, parent_rotation):
         """
         Parse the body to the canvas to draw the png

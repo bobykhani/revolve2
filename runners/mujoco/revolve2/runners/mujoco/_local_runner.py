@@ -130,7 +130,7 @@ class LocalRunner(Runner):
         if record_settings is not None:
             video_step = 1 / record_settings.fps
             video_file_path = f"{record_settings.video_directory}/{env_index}.mp4"
-            fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+            fourcc = cv2.VideoWriter_fourcc(*"avc1")
             video = cv2.VideoWriter(
                 video_file_path,
                 fourcc,
@@ -213,6 +213,7 @@ class LocalRunner(Runner):
                     con=viewer.ctx,
                 )
                 img = np.flip(img, axis=0)  # img is upside down initially
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 video.write(img)
 
         if not headless or record_settings is not None:
@@ -280,6 +281,27 @@ class LocalRunner(Runner):
 
         env_mjcf.option.gravity = [0, 0, -9.81]
 
+
+
+
+        env_mjcf.asset.add(
+            "texture",
+            name="grid",
+            type="2d",
+            builtin="checker",
+            width="512",
+            height="512",
+            rgb1=".0 .0 .0",
+            rgb2="10.2 10.3 10.4",
+        )
+        env_mjcf.asset.add(
+            "material",
+            name="grid",
+            texture="grid",
+            texrepeat="1 1",
+            texuniform="true",
+            reflectance=".001"
+        )
         env_mjcf.worldbody.add(
             "geom",
             type="sphere",
@@ -287,12 +309,21 @@ class LocalRunner(Runner):
             size=[0.2],  # size of the sphere
             rgba=[0.0, 0.0, 1.0, 1.0],  # color of the sphere
         )
+        env_mjcf.worldbody.add(
+            "light",
+            pos=[0, 0, 100],
+            ambient=[0.5, 0.5, 0.5],
+            directional=True,
+            castshadow=False,
+        )
+        env_mjcf.visual.headlight.active = 1
         heightmaps: List[geometry.Heightmap] = []
         for geo in env_descr.static_geometries:
             if isinstance(geo, geometry.Plane):
                 env_mjcf.worldbody.add(
                     "geom",
                     type="plane",
+                    material="grid",
                     pos=[geo.position.x, geo.position.y, geo.position.z],
                     size=[geo.size.x / 2.0, geo.size.y / 2.0, 1.0],
                     rgba=[geo.color.x, geo.color.y, geo.color.z, 1.0],
@@ -323,15 +354,7 @@ class LocalRunner(Runner):
                 heightmaps.append(geo)
             else:
                 raise NotImplementedError()
-        env_mjcf.worldbody.add(
-            "light",
-            pos=[0, 0, 100],
-            ambient=[0.5, 0.5, 0.5],
-            directional=True,
-            castshadow=False,
-        )
 
-        env_mjcf.visual.headlight.active = 0
 
         for actor_index, posed_actor in enumerate(env_descr.actors):
             urdf = physbot_to_urdf(
@@ -350,6 +373,9 @@ class LocalRunner(Runner):
             ) as botfile:
                 mujoco.mj_saveLastXML(botfile.name, model)
                 robot = mjcf.from_file(botfile)
+
+            LocalRunner._set_parameters(robot)
+
 
             for joint in posed_actor.actor.joints:
                 robot.actuator.add(
@@ -448,3 +474,30 @@ class LocalRunner(Runner):
         for i, target in enumerate(targets):
             data.ctrl[2 * i] = target
             data.ctrl[2 * i + 1] = 0
+
+
+    @staticmethod
+    def _set_recursive_parameters(element):
+        if element.tag == "body":
+            for sub_element in element.body._elements:
+                LocalRunner._set_recursive_parameters(sub_element)
+
+        if element.tag == "geom":
+            element.friction = [0.7, 0.1, 0.1]
+            if 'core' in element.full_identifier:
+                element.rgba = [1., 1., 0, 1.]
+            elif 'activehinge' in element.full_identifier:
+                element.rgba = [0.8, 0., 0.2, 1.]
+            elif 'brick' in element.full_identifier:
+                element.rgba = [0.0, 0., 1, 1.]
+        # if math.isclose(element.size[0], 0.044, abs_tol=0.001):
+            #     element.rgba = [1., 1., 0., 1.]
+            # elif math.isclose(element.size[0], 0.031, abs_tol=0.001):
+            #     element.rgba = [.1, 0., 1., 1.]
+            # else:
+            #     element.rgba = [0., 1., 0., 1.]
+
+    @staticmethod
+    def _set_parameters(robot):
+        for element in robot.worldbody.body._elements:
+            LocalRunner._set_recursive_parameters(element)

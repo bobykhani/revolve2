@@ -8,8 +8,9 @@ import multineat
 import numpy as np
 import sqlalchemy
 
+from robots import *
+
 #from experiments.optimize_modular_v2.body_spider import make_body_spider
-from experiments.optimize_modular_v2.robots import *
 from revolve2.core.database import IncompatibleError, Serializer
 from revolve2.core.modular_robot import ModularRobot
 from revolve2.genotypes.cppnwin import Genotype as CppnwinGenotype
@@ -201,43 +202,64 @@ def random(
 
 
     evolvable_mask = True
-
-    if body_fixed == 'spider':
-        x = len(spider().find_active_hinges())
-    elif body_fixed == 'salamander':
-        x = len(salamander().find_active_hinges())
-    elif body_fixed == 'snake':
-        x = len(snake().find_active_hinges())
-    elif body_fixed == 'insect':
-        x = len(insect().find_active_hinges())
-    elif body_fixed == 'babya':
-        x = len(babya().find_active_hinges())
-    elif body_fixed == 'babyb':
-        x = len(babyb().find_active_hinges())
-    elif body_fixed == 'blokky':
-        x = len(blokky().find_active_hinges())
-    elif body_fixed == 'garrix':
-        x = len(garrix().find_active_hinges())
-    elif body_fixed == 'gecko':
-        x = len(gecko().find_active_hinges())
-    elif body_fixed == 'stingray':
-        x = len(stingray().find_active_hinges())
-    elif body_fixed == 'tinlicker':
-        x = len(tinlicker().find_active_hinges())
-    elif body_fixed == 'turtle':
-        x = len(turtle().find_active_hinges())
-    elif body_fixed == 'ww':
-        x = len(ww().find_active_hinges())
-    elif body_fixed == 'zappa':
-        x = len(zappa().find_active_hinges())
-    elif body_fixed == 'ant':
-        x = len(ant().find_active_hinges())
-    elif body_fixed == 'park':
-        x = len(park().find_active_hinges())
+    bb = 'evolvable'
+    if bb == 'evolvable':
+        b = body_develop(body)
+        bb = b.develop()
+        x = len(bb[0].find_active_hinges())
+        if x == 0:
+            x = 1
     else:
-        # show error message and stop the program
-        print('ERROR: no body fixed')
-        sys.exit()
+        if body_fixed == 'spider':
+            x = len(spider().find_active_hinges())
+        elif body_fixed == 'salamander':
+            x = len(salamander().find_active_hinges())
+        elif body_fixed == 'snake':
+            x = len(snake().find_active_hinges())
+        elif body_fixed == 'insect':
+            x = len(insect().find_active_hinges())
+        elif body_fixed == 'babya':
+            x = len(babya().find_active_hinges())
+        elif body_fixed == 'babyb':
+            x = len(babyb().find_active_hinges())
+        elif body_fixed == 'blokky':
+            x = len(blokky().find_active_hinges())
+        elif body_fixed == 'garrix':
+            x = len(garrix().find_active_hinges())
+        elif body_fixed == 'gecko':
+            x = len(gecko().find_active_hinges())
+        elif body_fixed == 'stingray':
+            x = len(stingray().find_active_hinges())
+        elif body_fixed == 'tinlicker':
+            x = len(tinlicker().find_active_hinges())
+        elif body_fixed == 'turtle':
+            x = len(turtle().find_active_hinges())
+        elif body_fixed == 'ww':
+            x = len(ww().find_active_hinges())
+        elif body_fixed == 'zappa':
+            x = len(zappa().find_active_hinges())
+        elif body_fixed == 'ant':
+            x = len(ant().find_active_hinges())
+        elif body_fixed == 'park':
+            x = len(park().find_active_hinges())
+        elif body_fixed == 'linkin':
+            x = len(linkin().find_active_hinges())
+        elif body_fixed == 'longleg':
+            x = len(longleg().find_active_hinges())
+        elif body_fixed == 'penguin':
+            x = len(penguin().find_active_hinges())
+        elif body_fixed == 'pentapod':
+            x = len(pentapod().find_active_hinges())
+        elif body_fixed == 'queen':
+            x = len(queen().find_active_hinges())
+        elif body_fixed == 'squarish':
+            x = len(squarish().find_active_hinges())
+        elif body_fixed == 'Head':
+            x = len(Head().find_active_hinges())
+        else:
+            # show error message and stop the program
+            print('ERROR: no body fixed')
+            sys.exit()
 
     brain = brain_random(
         innov_db_brain,
@@ -346,14 +368,14 @@ def crossover(
             parent1.mask
         )
 
-def develop(genotype: Genotype,robot) -> ModularRobot:
+def develop(genotype: Genotype, robot) -> ModularRobot:
     """
     Develop the genotype into a modular robot.
 
     :param genotype: The genotype to create the robot from.
     :returns: The created robot.
     """
-    bb = 'not evolvable'
+    bb = '-evolvable'
     if bb != 'evolvable':
         if robot == 'spider':
             body = spider()
@@ -385,18 +407,35 @@ def develop(genotype: Genotype,robot) -> ModularRobot:
             body = ant()
         elif robot == 'park':
             body = park()
+        # Add the missing robots here
+        elif robot == 'linkin':
+            body = linkin()
+        elif robot == 'longleg':
+            body = longleg()
+        elif robot == 'penguin':
+            body = penguin()
+        elif robot == 'pentapod':
+            body = pentapod()
+        elif robot == 'queen':
+            body = queen()
+        elif robot == 'squarish':
+            body = squarish()
+        elif robot == 'snake':
+            body = snake()
+        elif robot == 'Head':
+            body = Head()
         else:
             # show error message and stop the program
             print('ERROR: no body fixed')
             sys.exit()
 
         body = {0: body}
-        #body = {0: spider()}
     else:
         b = body_develop(genotype.body)
         body = b.develop()
     brain = brain_develop(genotype.brain, body, genotype.mask)
     return ModularRobot(body, brain)
+
 
 
 def _multineat_rng_from_random(rng: Random) -> multineat.RNG:

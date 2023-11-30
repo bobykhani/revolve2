@@ -93,6 +93,13 @@ def get(name: str) -> Body:
     else:
         raise ValueError(f"Robot does not exist: {name}")
 
+def Head() -> Body:
+    body = Body()
+    body.core.left = ActiveHinge(np.pi / 2.0)
+    body.core.right = ActiveHinge(0.0)
+    body.core.front = Brick(np.pi / 2.0)
+    body.finalize()
+    return body
 
 def spider() -> Body:
     """
