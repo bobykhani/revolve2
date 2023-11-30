@@ -17,7 +17,7 @@ setup(
     package_data={"revolve2.genotypes.cppnwin": ["py.typed"]},
     install_requires=[
         f"revolve2-core @ file://{os.path.join(revolve2_path, 'core')}",
-        "multineat @ git+https://github.com/bobykhani/MultiNEAT.git@v0.10",
+        "multineat @ git+https://github.com/bobykhani/MultiNEAT.git",
     ],
     extras_require={"dev": []},
     zip_safe=False,
