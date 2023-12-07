@@ -25,7 +25,7 @@ class ModularRobotRerunner:
         record_settings: Optional[RecordSettings] = None,
         exp: str = None,
     ) -> None:
-        rs = RecordSettings("./video/"+exp)
+        rs = RecordSettings("./video/"+str(exp))
         record_settings = rs
         """
         Rerun a single robot.

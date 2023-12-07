@@ -375,7 +375,7 @@ def develop(genotype: Genotype, robot) -> ModularRobot:
     :param genotype: The genotype to create the robot from.
     :returns: The created robot.
     """
-    bb = '-evolvable'
+    bb = 'not evolvable'
     if bb != 'evolvable':
         if robot == 'spider':
             body = spider()

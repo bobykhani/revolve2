@@ -26,7 +26,7 @@ def random_v1(
             output_activation_func,
             # 4,  # bias(always 1), pos_x, pos_y, inclined
             5,  # pos_x, pos_y, inclined
-            4,  # brick, activehinge, rot0, rot90
+            6,  # brick, activehinge, rot0, rot90
             num_initial_mutations,
         )
     else:
@@ -37,7 +37,7 @@ def random_v1(
             output_activation_func,
             # 3,  # bias(always 1), pos_x, pos_y
             5,  # pos_x, pos_y
-            4,  # brick, activehinge, rot0, rot90
+            6,  # brick, activehinge, rot0, rot90
             num_initial_mutations,
         )
 
@@ -318,14 +318,14 @@ class Develop:
         outputs = self.cppn.Output()
 
         # get module type from output probabilities
-        type_probs = [outputs[0], outputs[1]]#,outputs[2]]
+        type_probs = [outputs[0], outputs[1],outputs[2]]
 
         brick_bias = 0#0.2  # This value can be adjusted based on desired behavior
         ActiveHinge_bias = 0#0.1  # This value can be adjusted based on desired behavior
         PassiveBone_bias = 0#0.1  # This value can be adjusted based on desired behavior
         type_probs[0] += brick_bias
         type_probs[1] += ActiveHinge_bias
-        # type_probs[2] += PassiveBone_bias
+        type_probs[2] += PassiveBone_bias
 
 
         types = [Brick, ActiveHinge, PassiveBone]
@@ -341,9 +341,9 @@ class Develop:
         else:
             rotation = 0
 
-#        Y = ((outputs[4] - (-1)) / (1 - (-1))) * (0.2 - 0.1) + 0.1
+        Y = ((outputs[4] - (-1)) / (1 - (-1))) * (0.2 - 0.1) + 0.1
 
-        size = 0#Y
+        size = Y
 
         return module_type, rotation, size
 
