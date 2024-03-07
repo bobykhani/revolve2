@@ -146,14 +146,14 @@ class Develop:
 
             # calculates coordinates of potential new module
             potential_module_coord, turtle_direction = self.calculate_coordinates(parent_module, direction)
-
+            # potential_module_coord[2] = 0
             radius = self.substrate_radius
 
             # substrate limit
             if radius >= potential_module_coord[0] >= -radius and radius >= potential_module_coord[1] >= -radius:
 
                 # queries potential new module given coordinates
-                module_type, rotation, size = \
+                module_type, rotation,a = \
                     self.query_body_part(potential_module_coord[0], potential_module_coord[1])
 
                 # if position in substrate is not already occupied
@@ -165,23 +165,17 @@ class Develop:
 
                     new_module.turtle_direction = turtle_direction
 
-
                     # attaches module
-                    if isinstance(new_module, PassiveBone):
-                        new_module._size = size
-
                     parent_module.children[direction] = new_module
                     self.queried_substrate[potential_module_coord] = new_module
 
                     # joints branch out only to the front
                     if module_type is ActiveHinge:
                         directions = [ActiveHinge.ATTACHMENT]
-                    elif module_type is PassiveBone:
-                        directions = [PassiveBone.ATTACHMENT]
                     else:
-                        directions = [Core.LEFT,
-                                      Core.FRONT,
-                                      Core.RIGHT]
+                        directions = [Brick.LEFT,
+                                      Brick.FRONT,
+                                      Brick.RIGHT]
 
                     self.free_slots[parent_module_coor].remove(direction)
                     if len(self.free_slots[parent_module_coor]) == 0:
@@ -279,73 +273,25 @@ class Develop:
     #
     #     return module
 
-    def query_body_part(self, x_dest, y_dest):
+    def query_body_part(self, x_dest, y_dest, z_dest=0):
 
-        # # Applies regulation according to environmental conditions.
-        if self.plastic_body == 0:
-            # self.cppn.Input(  [1.0, x_dest, y_dest]  )  # 1.0 is the bias input
-            self.cppn.Input([x_dest, y_dest])
-        else:
-
-            staticfriction, dynamicfriction, yrotationdegrees, platform, toxic = \
-                float(self.env_condition[0]), \
-                float(self.env_condition[1]), \
-                float(self.env_condition[2]), \
-                float(self.env_condition[3]), \
-                float(self.env_condition[4])
-
-            # TODO: make conditions-checking dynamic
-
-            # if inclined
-            # if yrotationdegrees > 0:
-            #     inclined = -1
-            # else:
-            #     inclined = 1
-
-            # obsolete name: toxic here means just a change in task
-            if toxic > 0:
-                toxicenv = 1
-            else:
-                toxicenv = -1
-
-            self.cppn.Input(
-                # [x_dest, y_dest, inclined]
-                [x_dest, y_dest, toxicenv]
-                #   [1.0, x_dest, y_dest, inclined]  # 1.0 is the bias input
-            )
-
+        self.cppn.Input([x_dest, y_dest, z_dest])
         self.cppn.ActivateAllLayers()
         outputs = self.cppn.Output()
 
         # get module type from output probabilities
-        type_probs = [outputs[0], outputs[1],outputs[2]]
-
-        brick_bias = 0#0.2  # This value can be adjusted based on desired behavior
-        ActiveHinge_bias = 0#0.1  # This value can be adjusted based on desired behavior
-        PassiveBone_bias = 0#0.1  # This value can be adjusted based on desired behavior
-        type_probs[0] += brick_bias
-        type_probs[1] += ActiveHinge_bias
-        type_probs[2] += PassiveBone_bias
-
-
-        types = [Brick, ActiveHinge, PassiveBone]
-        module_type = types[type_probs.index(min(type_probs))]
-
-        # types = [Brick, ActiveHinge, PassiveBone]
-        # module_type = types[type_probs.index(max(type_probs))]
+        type_probs = [outputs[0], outputs[1]]
+        types = [Brick, ActiveHinge]
+        module_type = types[type_probs.index(max(type_probs))]
 
         # get rotation from output probabilities
         if module_type is ActiveHinge:
-            rotation_probs = [outputs[3], outputs[4]]
-            rotation = rotation_probs.index(min(rotation_probs))
+            rotation_probs = [outputs[2], outputs[3]]
+            rotation = rotation_probs.index(max(rotation_probs))
         else:
             rotation = 0
 
-        Y = ((outputs[4] - (-1)) / (1 - (-1))) * (0.2 - 0.1) + 0.1
-
-        size = Y
-
-        return module_type, rotation, size
+        return module_type, rotation, 0
 
     def get_color(self, module_type, rotation):
         rgb = []

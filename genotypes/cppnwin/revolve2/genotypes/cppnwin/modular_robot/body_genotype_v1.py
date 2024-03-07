@@ -35,7 +35,7 @@ def random_v1(
         multineat_params,
         output_activation_func,
         5,  # bias(always 1), pos_x, pos_y, pos_z, chain_length
-        6,  # empty, brick, activehinge, rot0, rot90, PassiveBone, PBSize
+        4,  # empty, brick, activehinge, rot0, rot90, PassiveBone, PBSize
         num_initial_mutations,
     )
 
@@ -127,27 +127,27 @@ def __evaluate_cppn(
     outputs = body_net.Output()
 
     # get module type from output probabilities
-    type_probs = [outputs[0], outputs[1], outputs[2], outputs[3]]
-    types = [None, Brick, ActiveHinge, PassiveBone]
+    type_probs = [outputs[0], outputs[1], outputs[2]]
+    types = [None, Brick, ActiveHinge]
     module_type = types[type_probs.index(min(type_probs))]
 
     # get rotation from output probabilities
-    rotation_probs = [outputs[4]]
+    rotation_probs = [outputs[3]]
     rotation = rotation_probs.index(min(rotation_probs))
 
     #change range to bone size range
     #new_value = ( (old_value - old_min) / (old_max - old_min) ) * (new_max - new_min) + new_min
 
     #Y = (((outputs[6] - 0) / (1 - 0)) * (0.2 - 0.1)) + 0.1
-    Y = ((outputs[5] - (-1)) / (1 - (-1))) * (0.2 - 0.1) + 0.1
+    # Y = ((outputs[5] - (-1)) / (1 - (-1))) * (0.2 - 0.1) + 0.1
 
-    size = Y #0
+    # size = Y #0
     # if outputs[5]>0.5:
     #     size = 0.2
     # else:
     #     size = 0.1
 
-    return (module_type, rotation, size)
+    return (module_type, rotation)
 
 
 def ___add_child(
@@ -170,7 +170,7 @@ def ___add_child(
     else:
         grid.add(position)
 
-    child_type, orientation, size = __evaluate_cppn(body_net, position, chain_length)
+    child_type, orientation = __evaluate_cppn(body_net, position, chain_length)
     if child_type is None:
         return None
     up = __rotate(module.up, forward, orientation)

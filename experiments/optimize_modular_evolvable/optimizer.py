@@ -13,7 +13,7 @@ import revolve2.core.optimization.ea.generic_ea.selection as selection
 import sqlalchemy
 
 from core.revolve2.core.modular_robot.render.render import Render
-from genotype import Genotype, GenotypeSerializer, crossover, develop, mutate
+from genotype_v2 import Genotype, GenotypeSerializer, crossover, develop, mutate
 from pyrr import Quaternion, Vector3
 from revolve2.core.database import IncompatibleError
 from revolve2.core.database.serializers import FloatSerializer, StatesSerializer
@@ -251,7 +251,7 @@ class Optimizer(EAOptimizer[Genotype, float]):
         return True
 
     def _init_runner(self) -> None:
-        self._runner = LocalRunner(headless=False, num_simulators=1)
+        self._runner = LocalRunner(headless=True, num_simulators=4)
 
     def _select_parents(
         self,
@@ -356,18 +356,18 @@ class Optimizer(EAOptimizer[Genotype, float]):
         for i, phenotype in enumerate(phenotypes):
             m = Measure(states=states,genotype_idx=i,phenotype=phenotype,generation=0,simulation_time=self._simulation_time)
             measures_genotypes.append(m.measure_all_non_relative())
-        #     render = Render()
-        #
-        #     img_path = f'database_karine_params/body_images/generation_{self.generation_index}/individual_{i}.png'
-        #     img_directory = f'database_karine_params/body_images/generation_{self.generation_index}/'
-        #     # Check whether the specified path exists or not
-        #     isExist = os.path.exists(img_directory)
-        #     if not isExist:
-        #         # Create a new directory because it does not exist
-        #         os.makedirs(img_directory)
-        #         print("The new directory is created!")
-        #
-        #     render.render_robot(phenotype.body.core, img_path)
+            render = Render()
+
+            img_path = f'database_/body_images/generation_{self.generation_index}/individual_{i}.png'
+            img_directory = f'database_/body_images/generation_{self.generation_index}/'
+            # Check whether the specified path exists or not
+            isExist = os.path.exists(img_directory)
+            if not isExist:
+                # Create a new directory because it does not exist
+                os.makedirs(img_directory)
+                print("The new directory is created!")
+
+            render.render_robot(phenotype.body[0].core, img_path)
 
         return measures_genotypes,states.environment_results
         # return [

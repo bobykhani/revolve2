@@ -245,7 +245,7 @@ class LocalRunner(Runner):
         sample_step = 1 / batch.sampling_frequency
 
         if record_settings is not None:
-            os.makedirs(record_settings.video_directory, exist_ok=False)
+            os.makedirs(record_settings.video_directory, exist_ok=True)
 
         with concurrent.futures.ProcessPoolExecutor(
             max_workers=self._num_simulators

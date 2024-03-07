@@ -31,7 +31,7 @@ from mask_gene.mask_genotype import MaskGenome
 #     random_v1 as brain_random,
 # )
 
-from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_ann import (random_v1 as brain_random, develop_v1 as brain_develop)
+from revolve2.genotypes.cppnwin.modular_robot.brain_genotype_ann_v2 import (random_v1 as brain_random, develop_v1 as brain_develop)
 
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
@@ -195,7 +195,7 @@ def random(
         multineat_rng,
         _MULTINEAT_PARAMS,
         multineat.ActivationFunction.TANH,
-        0,
+        50,
         n_env_conditions = 0,
         plastic_body = 0,
     )
@@ -325,7 +325,7 @@ def crossover(
     """
     multineat_rng = _multineat_rng_from_random(rng)
 
-    evolvable_mask = True
+    evolvable_mask = False
 
     if evolvable_mask:
         return Genotype(
@@ -345,7 +345,7 @@ def crossover(
                 False,
                 False,
             ),
-            parent1.mask.crossover(parent2.mask)
+            # parent1.mask.crossover(parent2.mask)
         )
     else:
         return Genotype(
@@ -433,7 +433,8 @@ def develop(genotype: Genotype, robot) -> ModularRobot:
     else:
         b = body_develop(genotype.body)
         body = b.develop()
-    brain = brain_develop(genotype.brain, body, genotype.mask)
+        x = len(body[0].find_active_hinges())
+    brain = brain_develop(genotype.brain, body, genotype.mask,x)
     return ModularRobot(body, brain)
 
 

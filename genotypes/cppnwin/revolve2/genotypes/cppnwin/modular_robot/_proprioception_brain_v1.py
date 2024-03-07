@@ -54,7 +54,8 @@ class ProprioceptionCPPNNetwork(ActorController):
             self.brain_net = multineat.NeuralNetwork()
             self._genotype.BuildPhenotype(self.brain_net)
 
-        sin = 0 #math.sin(self._steps)
+
+        sin = math.sin(self._steps)
 
         # Assuming you want to add sin to each sensor value
         self._sensors = apply_mask(self._sensors,self._mask)
