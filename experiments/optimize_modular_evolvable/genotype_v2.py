@@ -271,11 +271,11 @@ def random(
         x
     )
 
-    mask = MaskGenome(x)
-    if not evolvable_mask:
-        mask.genome = np.ones(x)
+    # mask = MaskGenome(x)
+    # if not evolvable_mask:
+    #     mask.genome = np.ones(x)
 
-    return Genotype(body, brain, mask)
+    return Genotype(body, brain, b.mask)
 
 
 def mutate(
@@ -299,9 +299,9 @@ def mutate(
 
     multineat_rng = _multineat_rng_from_random(rng)
 
-    if evolvable_mask:
-        if (genotype.mask != None):
-            genotype.mask.mutate(0.02)
+    # if evolvable_mask:
+    #     if (genotype.mask != None):
+    #         genotype.mask.mutate(0.02)
 
     return Genotype(
         mutate_v1(genotype.body, _MULTINEAT_PARAMS, innov_db_body, multineat_rng),
@@ -434,7 +434,7 @@ def develop(genotype: Genotype, robot) -> ModularRobot:
         b = body_develop(genotype.body)
         body = b.develop()
         x = len(body[0].find_active_hinges())
-    brain = brain_develop(genotype.brain, body, genotype.mask,x)
+    brain = brain_develop(genotype.brain, body, b.mask,x)
     return ModularRobot(body, brain)
 
 

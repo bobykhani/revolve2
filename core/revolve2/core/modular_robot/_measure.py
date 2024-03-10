@@ -67,10 +67,10 @@ class Measure:
         self._measures['brick_prop'] = self._measures['brick_count'] / self._measures['modules_count']
 
     def _brain_mask(self):
-        self._measures['brain_mask'] = str(self._phenotype_brain._mask.genome)
+        self._measures['brain_mask'] = str(self._phenotype_brain._mask)
 
     def _sum_mask(self):
-        self._measures['sum_mask'] = sum(self._phenotype_brain._mask.genome)*10
+        self._measures['sum_mask'] = sum(self._phenotype_brain._mask)
 
     # behavioral measures
     # TODO simulation can continue slightly passed the defined sim time.

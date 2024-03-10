@@ -36,15 +36,15 @@ def random_v1(
             multineat_params,
             output_activation_func,
             # 3,  # bias(always 1), pos_x, pos_y
-            5,  # pos_x, pos_y
-            6,  # brick, activehinge, rot0, rot90
+            2,  # pos_x, pos_y
+            5,  # brick, activehinge, rot0, rot90
             num_initial_mutations,
         )
 
 
 class Develop:
 
-    def __init__(self, genotype, max_modules=15, substrate_radius=5, querying_seed=1000, env_condition=0, n_env_conditions=0,
+    def __init__(self, genotype, max_modules=30, substrate_radius=5, querying_seed=10000, env_condition=0, n_env_conditions=0,
                  plastic_body=0):
 
         self.max_modules = max_modules
@@ -65,6 +65,7 @@ class Develop:
         self.outputs_count = {
             'b_module': 0,
             'a_module': 0}
+        self.mask = []
 
     def develop(self):
 
@@ -153,7 +154,7 @@ class Develop:
             if radius >= potential_module_coord[0] >= -radius and radius >= potential_module_coord[1] >= -radius:
 
                 # queries potential new module given coordinates
-                module_type, rotation,a = \
+                module_type, rotation, Active = \
                     self.query_body_part(potential_module_coord[0], potential_module_coord[1])
 
                 # if position in substrate is not already occupied
@@ -186,7 +187,9 @@ class Develop:
 
                     # fins new free slot
                     parent_module_coor, parent_module, direction = self.choose_free_slot()
-
+                    if module_type == ActiveHinge:
+                        self.mask.append(int(Active))
+        print(self.mask)
                 # use this for not stopping ofter finding an intersection for the first time
                 # else:
                 # parent_module_coor = self.choose_free_slot()
@@ -274,15 +277,21 @@ class Develop:
     #     return module
 
     def query_body_part(self, x_dest, y_dest, z_dest=0):
-
+        Active_prob = 0.5
         self.cppn.Input([x_dest, y_dest, z_dest])
         self.cppn.ActivateAllLayers()
         outputs = self.cppn.Output()
 
         # get module type from output probabilities
-        type_probs = [outputs[0], outputs[1]]
-        types = [Brick, ActiveHinge]
-        module_type = types[type_probs.index(max(type_probs))]
+        type_probs = [outputs[0], outputs[1],outputs[4]]
+        types = [Brick, ActiveHinge, Active_prob]
+        module_type = types[type_probs.index(max(type_probs[:2]))]
+        Active_prob = type_probs[2]
+
+        if Active_prob > 0:
+            Active = True
+        else:
+            Active = False
 
         # get rotation from output probabilities
         if module_type is ActiveHinge:
@@ -291,7 +300,7 @@ class Develop:
         else:
             rotation = 0
 
-        return module_type, rotation, 0
+        return module_type, rotation, Active
 
     def get_color(self, module_type, rotation):
         rgb = []

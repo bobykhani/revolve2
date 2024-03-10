@@ -22,10 +22,10 @@ import os
 
 def apply_mask(inputs: List[float], mask: List[int]) -> List[float]:
     # Apply the mask only to the first 'n' elements of the inputs, where 'n' is the length of the mask
-    masked_part = [input_val * mask_val for input_val, mask_val in zip(inputs[:len(mask.genome)], mask.genome)]
+    masked_part = [input_val * mask_val for input_val, mask_val in zip(inputs[:len(mask)], mask)]
 
     # Keep the remaining part of the inputs unchanged
-    remaining_part = inputs[len(mask.genome):]
+    remaining_part = inputs[len(mask):]
 
     # Combine the masked and remaining parts
     return masked_part + list(remaining_part)
@@ -135,7 +135,7 @@ class ProprioceptionCPPNNetwork(ActorController):
         closed_loop = [(sensor + sin) for sensor in self._sensors]
 
         if self._mask != None:
-            mask_str = str(self._mask.genome)
+            mask_str = str(self._mask)
             #
             # # Save the mask string to a text file in a new line
             # with open('mask_strings.txt', 'a') as file:
