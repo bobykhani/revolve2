@@ -99,6 +99,7 @@ class LocalRunner(Runner):
         control_step: float,
         sample_step: float,
         simulation_time: int,
+        exp = None,
     ) -> EnvironmentResults:
         logging.info(f"Environment {env_index}")
 
@@ -157,7 +158,7 @@ class LocalRunner(Runner):
                 last_control_time = math.floor(time / control_step) * control_step
                 control_user = ActorControl()
                 env_descr.controller.actor_controller._sensors = env_descr.controller.actor_controller.get_dof_targets()
-                env_descr.controller.control(control_step, control_user)
+                env_descr.controller.control(control_step, control_user,exp = exp)
 
                 #current_vision = vision_obj.process(model, data)
                 # rotate vision by 180 degrees
@@ -230,7 +231,7 @@ class LocalRunner(Runner):
         return results
 
     async def run_batch(
-        self, batch: Batch, record_settings: Optional[RecordSettings] = None
+        self, batch: Batch, record_settings: Optional[RecordSettings] = None, exp = None
     ) -> BatchResults:
         """
         Run the provided batch by simulating each contained environment.
@@ -261,6 +262,8 @@ class LocalRunner(Runner):
                     control_step,
                     sample_step,
                     batch.simulation_time,
+                    exp,
+
                 )
                 for env_index, env_descr in enumerate(batch.environments)
             ]

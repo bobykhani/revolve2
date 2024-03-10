@@ -337,8 +337,8 @@ class Optimizer(EAOptimizer[Genotype, float]):
                 ),
             )
             batch.environments.append(env)
-
-        batch_results = await self._runner.run_batch(batch)
+        exp_path = str(database.url).split('///./')[1].split('/')[0]
+        batch_results = await self._runner.run_batch(batch,exp = exp_path)
 
         measures = []
         #for environment_result in batch_results.environment_results:

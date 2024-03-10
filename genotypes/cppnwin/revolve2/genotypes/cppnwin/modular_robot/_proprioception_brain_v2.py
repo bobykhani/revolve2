@@ -44,7 +44,7 @@ class ProprioceptionCPPNNetwork(ActorController):
         self.controller = None
         # self.develop_controller()
 
-    def develop_controller(self):
+    def develop_controller(self, exp = None):
         # self._n_joints = len(dof_ids)
         # self._dof_targets = [0] * self._n_joints
         if not hasattr(self, 'brain_net'):
@@ -103,7 +103,7 @@ class ProprioceptionCPPNNetwork(ActorController):
         # print("Connections after pruning:")
         # for conn in nn.connections:
         #     print(f"{conn.from_neuron.id} -> {conn.to_neuron.id}, weight: {conn.weight}")
-        self.plot_nn(nn)
+        self.plot_nn(nn,exp = exp)
 
         self.controller = nn
 
@@ -120,12 +120,12 @@ class ProprioceptionCPPNNetwork(ActorController):
 
         return self
 
-    def step(self, dt: float) -> None:
+    def step(self, dt: float, exp = None) -> None:
         # Only build the network if it doesn't exist, otherwise reuse
         # if not hasattr(self, 'brain_net'):
         #     self.brain_net = multineat.NeuralNetwork()
         #     self._genotype.BuildPhenotype(self.brain_net)
-        self.develop_controller()
+        self.develop_controller(exp)
 
         sin = math.sin(self._steps)
 
@@ -183,7 +183,7 @@ class ProprioceptionCPPNNetwork(ActorController):
         pass
 
 
-    def plot_nn(self, nn):
+    def plot_nn(self, nn, exp = None):
 
         # Create a directed graph
         G = nx.DiGraph()
@@ -234,9 +234,9 @@ class ProprioceptionCPPNNetwork(ActorController):
         nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color='red')
 
         # make a folder nn_plots if not exist and save plots in it
-        if not os.path.exists('nn_plots'):
-            os.makedirs('nn_plots')
+        if not os.path.exists(exp+'/nn_plots'):
+            os.makedirs(exp+'/nn_plots')
         import time
-        plt.savefig('nn_plots/nn_plot'+str(time.time())+'.png')
+        plt.savefig(exp+'/nn_plots/nn_plot'+str(time.time())+'.png')
         # plt.show()
         plt.close()
