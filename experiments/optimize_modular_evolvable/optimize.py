@@ -53,7 +53,7 @@ async def main() -> None:
     # random number generator
     rng = Random()
     # rng.seed(random.random())
-    rng.seed(10)
+    rng.seed(10000)
 
     # database_karine_params
     database = open_async_database_sqlite("./database_", create=True)

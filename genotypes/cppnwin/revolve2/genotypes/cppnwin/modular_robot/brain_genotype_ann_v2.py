@@ -4,7 +4,7 @@ from revolve2.core.modular_robot import Body
 
 from .._genotype import Genotype
 from .._random_v1 import random_v1 as base_random_v1
-from ._proprioception_brain_v2 import ProprioceptionCPPNNetwork as BrainANN
+from ._proprioception_brain_v3 import ProprioceptionCPPNNetwork as BrainANN
 from revolve2.genotypes.cppnwin.modular_robot.body_genotype_v2 import (
     Develop as body_develop,)
 
@@ -37,5 +37,14 @@ def random_v1(
         num_initial_mutations,
     )
 
+# def develop_v1(genotype: Genotype, body: Body, mask,joint_count) -> BrainANN:
+#     return BrainANN(genotype.genotype, mask, joint_count)
+
 def develop_v1(genotype: Genotype, body: Body, mask,joint_count) -> BrainANN:
+    return BrainANN(genotype.genotype, mask, joint_count)
+
+
+
+
+def develop_v3(genotype: Genotype, body: Body, mask,joint_count) -> BrainANN:
     return BrainANN(genotype.genotype, mask, joint_count)

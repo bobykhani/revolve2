@@ -18,7 +18,7 @@ from .NN_Controller import NeuralNetwork
 import matplotlib.pyplot as plt
 import networkx as nx
 import os
-from .ESNN_Controller import ESNeuralNetwork
+# from .ESNN_Controller import ESNeuralNetwork
 
 
 def apply_mask(inputs: List[float], mask: List[int]) -> List[float]:
@@ -129,7 +129,7 @@ from .NN_Controller import NeuralNetwork
 import matplotlib.pyplot as plt
 import networkx as nx
 import os
-from .ESNN_Controller import ESNeuralNetwork
+# from .ESNN_Controller import ESNeuralNetwork
 
 
 def apply_mask(inputs: List[float], mask: List[int]) -> List[float]:
@@ -230,10 +230,27 @@ class ProprioceptionCPPNNetwork(ActorController):
 
         # Assuming your CPPN and substrate setup is ready, you'll need to define the substrate dimensions
         # For simplicity, let's say each joint (input/output) has a corresponding position in the substrate
+        input_coordinates = [(-1.0, i) for i in range(-self._n_joints // 2, self._n_joints // 2)]
+        output_coordinates = [(1.0, i) for i in range(-self._n_joints // 2, self._n_joints // 2)]
+
         substrate_dimensions = (self._n_joints, 2)  # For example, a simple 2-layer (input and output) structure
+        net = multineat.NeuralNetwork()
+        rng = multineat.RNG()
+        rng.TimeSeed()  # Seed the RNG based on current time
+        params = multineat.Parameters()
+        # Configure your parameters as needed
+
+        substrate = multineat.Substrate(
+            [],
+            [],
+            []
+        )
+        self._genotype.BuildESHyperNEATPhenotype(net, substrate, params, rng)
+
+        # self.brain_net.BuildPhenotype(net)
 
         # Initialize your ESNeuralNetwork (or modify it accordingly if it's already initialized elsewhere)
-        self.controller = ESNeuralNetwork(input_size=self._n_joints, output_size=self._n_joints)
+        # self.controller = ESNeuralNetwork(input_size=self._n_joints, output_size=self._n_joints)
 
         # Develop the network based on the CPPN - this function call needs to be adapted to your setup
         # Placeholder parameters for CPPN, substrate dimensions, and other configurations are used here

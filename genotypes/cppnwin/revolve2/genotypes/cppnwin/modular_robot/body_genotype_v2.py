@@ -44,7 +44,7 @@ def random_v1(
 
 class Develop:
 
-    def __init__(self, genotype, max_modules=30, substrate_radius=5, querying_seed=10000, env_condition=0, n_env_conditions=0,
+    def __init__(self, genotype, max_modules=30, substrate_radius=5, querying_seed=1000000, env_condition=0, n_env_conditions=0,
                  plastic_body=0):
 
         self.max_modules = max_modules
@@ -282,9 +282,21 @@ class Develop:
         self.cppn.ActivateAllLayers()
         outputs = self.cppn.Output()
 
+
+        # adding change to get active hinge
+        # outputs[0] = outputs[0] + 0.2
+        # outputs[1] = outputs[1] + 0
+
         # get module type from output probabilities
         type_probs = [outputs[0], outputs[1],outputs[4]]
+
+
         types = [Brick, ActiveHinge, Active_prob]
+
+        # add variable bias for each module to have more change of getting each separately
+
+
+
         module_type = types[type_probs.index(max(type_probs[:2]))]
         Active_prob = type_probs[2]
 
